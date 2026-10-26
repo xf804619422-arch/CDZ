@@ -104,7 +104,7 @@
   /* 快捷入口 */
   .quick-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     margin-bottom: 22px;
   }
@@ -130,6 +130,7 @@
   .quick-ico.recharge { background: var(--green-100); color: var(--green-600); }
   .quick-ico.record { background: var(--blue-100); color: var(--blue-500); }
   .quick-ico.frequent { background: #FFF3E0; color: #F59E0B; }
+  .quick-ico.signin { background: #FEF3C7; color: #D97706; }
   .quick-txt { min-width: 0; text-align: center; }
   .quick-title { font-size: 14px; font-weight: 800; color: var(--ink-900); }
   .quick-sub { font-size: 11px; color: var(--ink-400); margin-top: 2px; }
@@ -231,7 +232,7 @@
   /* 提示 Toast */
   .toast {
     position: absolute; left: 50%; bottom: 96px;
-    z-index: 60;
+    z-index: 90;
     transform: translateX(-50%) translateY(20px);
     background: rgba(15,32,26,.92); color: #fff;
     font-size: 13px; padding: 10px 18px; border-radius: 999px;
@@ -641,13 +642,21 @@
   }
   .user-info { flex: 1; }
   .nickname { font-size: 19px; font-weight: 800; color: var(--ink-900); }
+  .nickname.as-login { color: var(--green-600); cursor: pointer; }
   .user-phone { font-size: 13px; color: var(--ink-400); margin-top: 4px; }
-  .edit {
-    width: 34px; height: 34px; border-radius: 50%;
+  .notify {
+    position: relative;
+    width: 38px; height: 38px; border-radius: 50%;
     background: #fff; border: 1px solid var(--line);
     display: grid; place-items: center;
-    color: var(--ink-400); cursor: pointer;
-    flex: none;
+    color: var(--ink-600); cursor: pointer; flex: none;
+  }
+  .notify-badge {
+    position: absolute; top: -3px; right: -3px;
+    min-width: 16px; height: 16px; padding: 0 4px;
+    border-radius: 999px; background: #E11D48; color: #fff;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
   }
 
   .wallet-card {
@@ -662,13 +671,11 @@
     display: flex; align-items: center; justify-content: space-between;
     font-size: 13px; color: rgba(255,255,255,.85);
   }
-  .wallet-help {
-    width: 20px; height: 20px; border-radius: 50%;
-    background: rgba(255,255,255,.22);
-    display: grid; place-items: center;
-    font-size: 12px; font-weight: 700;
-    cursor: pointer;
+  .wallet-points {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 13px; color: rgba(255,255,255,.92);
   }
+  .wallet-points b { font-size: 15px; font-weight: 800; }
   .wallet-amount {
     font-size: 34px; font-weight: 800;
     margin: 10px 0 16px;
@@ -710,14 +717,43 @@
   .menu-icon.coupon { background: #FFF3E0; color: var(--orange); }
   .menu-icon.help { background: #EAF6FF; color: #0EA5E9; }
   .menu-icon.about { background: #F1F0FF; color: #7C6BF0; }
+  .menu-icon.service { background: #F1F5F9; color: #64748B; }
+  .menu-icon.logout { background: #FEE2E2; color: #E11D48; }
+  .menu-text.logout { color: #E11D48; }
   .menu-text { flex: 1; font-size: 15px; font-weight: 600; color: var(--ink-900); }
   .menu-arrow { color: var(--ink-300); flex: none; }
+
+  /* 金刚区 */
+  .kingkong {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    background: #fff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 16px 6px;
+    margin-bottom: 16px;
+  }
+  .kingkong-item {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer; transition: transform .12s ease;
+  }
+  .kingkong-item:active { transform: scale(.94); }
+  .kingkong-ico {
+    width: 46px; height: 46px; border-radius: 14px;
+    display: grid; place-items: center; flex: none;
+  }
+  .kingkong-ico.points { background: #FEF3C7; color: #D97706; }
+  .kingkong-ico.recharge { background: var(--green-100); color: var(--green-600); }
+  .kingkong-ico.record { background: var(--blue-100); color: var(--blue-500); }
+  .kingkong-ico.frequent { background: #FFF3E0; color: #F59E0B; }
+  .kingkong-txt { font-size: 12px; color: var(--ink-600); font-weight: 600; text-align: center; }
 
   /* 充值中心 */
   .recharge-overlay {
     position: absolute;
     top: 44px; left: 0; right: 0; bottom: 0;
-    z-index: 48;
+    z-index: 62;
     background: var(--bg);
     display: flex;
     flex-direction: column;
@@ -881,6 +917,7 @@
   }
   .record-item__time { font-size: 12px; color: var(--ink-300); }
   .record-item__fee { font-size: 16px; font-weight: 800; color: var(--ink-900); }
+  .record-item__fee.calc { font-size: 13px; font-weight: 700; color: var(--orange); }
 
   /* 常用电站 */
   .frequent-overlay {
@@ -1000,6 +1037,504 @@
     width: 138px; height: 138px;
   }
   .scan-hint { color: rgba(255,255,255,.5); font-size: 12px; }
+
+  /* ===== 授权登录页 ===== */
+  .login-overlay {
+    position: absolute; inset: 0; z-index: 70;
+    background: linear-gradient(180deg, #EAF5EF 0%, #F3F6F4 45%, #FFFFFF 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 32px 56px;
+    transition: opacity .28s ease, transform .28s ease;
+  }
+  .login-overlay.hide { opacity: 0; transform: translateY(14px); pointer-events: none; }
+  .login-logo {
+    width: 74px; height: 74px; border-radius: 22px;
+    background: linear-gradient(145deg, var(--green-500), var(--green-600));
+    color: #fff; display: grid; place-items: center;
+    box-shadow: 0 14px 30px rgba(14,143,92,.32); margin-bottom: 20px;
+  }
+  .login-brand { font-size: 24px; font-weight: 800; color: var(--ink-900); }
+  .login-slogan { font-size: 13px; color: var(--ink-400); margin-top: 8px; }
+  .login-scope {
+    width: 100%; max-width: 300px; background: #fff;
+    border: 1px solid var(--line); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm); padding: 16px; margin: 30px 0 24px;
+  }
+  .login-scope__title { font-size: 13px; font-weight: 700; color: var(--ink-600); margin-bottom: 10px; }
+  .login-scope__item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-600); padding: 5px 0; }
+  .login-scope__item svg { color: var(--green-500); flex: none; }
+  .login-btn {
+    width: 100%; max-width: 300px; padding: 15px 0; border-radius: 14px; border: none;
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    color: #fff; font-size: 16px; font-weight: 800;
+    box-shadow: 0 8px 18px rgba(14,143,92,.3); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .login-btn:active { transform: scale(.98); }
+  .login-btn.loading { pointer-events: none; opacity: .82; }
+  .login-skip { margin-top: 20px; font-size: 13px; color: var(--ink-400); cursor: pointer; padding: 8px 18px; }
+  .login-agree { margin-top: 14px; font-size: 11px; color: var(--ink-300); text-align: center; line-height: 1.7; }
+
+  /* ===== 充电进行中 ===== */
+  .charging-overlay {
+    position: absolute; top: 44px; left: 0; right: 0; bottom: 0; z-index: 59;
+    background: var(--bg); display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .charging-overlay.show { transform: translateX(0); }
+  .charging-body {
+    flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center;
+    padding: 20px 20px 12px;
+  }
+  .charging-station {
+    width: 100%; background: #fff; border-radius: var(--radius-md); padding: 14px 16px;
+    box-shadow: var(--shadow-sm); margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .charging-station .cs-left { min-width: 0; }
+  .charging-station .cs-name { font-size: 16px; font-weight: 800; color: var(--ink-900); }
+  .charging-station .cs-socket { font-size: 12.5px; color: var(--ink-400); margin-top: 3px; }
+  .charging-status-badge {
+    flex: none; font-size: 12px; font-weight: 700; color: var(--green-600);
+    background: var(--green-100); padding: 5px 12px; border-radius: 999px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .dot-pulse {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--green-500);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(20,164,107,.5); }
+    50% { box-shadow: 0 0 0 6px rgba(20,164,107,0); }
+  }
+  .charging-illust {
+    width: 100%;
+    background: linear-gradient(180deg, #EAF6F0, #F5FBF8);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 22px 16px 18px;
+    margin-bottom: 16px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .charging-illust__art { width: 132px; height: 132px; margin-bottom: 12px; }
+  .charging-illust__art svg { width: 100%; height: 100%; }
+  .charging-illust .ill-bolt { animation: boltPulse 1.8s ease-in-out infinite; }
+  @keyframes boltPulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+  .charging-illust__status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700; color: var(--green-600);
+    background: #fff; padding: 6px 14px; border-radius: 999px;
+    box-shadow: var(--shadow-sm); margin-bottom: 10px;
+  }
+  .charging-illust__time { font-size: 34px; font-weight: 800; color: var(--ink-900); font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+  .charging-illust__label { font-size: 12px; color: var(--ink-400); margin-top: 4px; }
+  .charging-metrics {
+    width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;
+  }
+  .charging-metric {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: 14px 6px; text-align: center; box-shadow: var(--shadow-sm);
+  }
+  .charging-metric .cm-value { font-size: 18px; font-weight: 800; color: var(--ink-900); font-variant-numeric: tabular-nums; }
+  .charging-metric .cm-label { font-size: 11px; color: var(--ink-400); margin-top: 4px; }
+  .charging-tip {
+    width: 100%; background: #FDF7EC; border: 1px solid #F6E7C8; color: #B07A12;
+    border-radius: var(--radius-md); padding: 12px 14px; font-size: 12.5px; line-height: 1.6;
+  }
+  .charging-footer {
+    flex: none; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: #fff; border-top: 1px solid var(--line);
+  }
+  .stop-btn {
+    width: 100%; padding: 15px 0; border-radius: 14px; border: 1.5px solid #FECDD3;
+    background: #fff; color: #E11D48; font-size: 16px; font-weight: 800; cursor: pointer;
+  }
+  .stop-btn:active { transform: scale(.98); background: #FFF1F2; }
+
+  /* ===== 订单详情 ===== */
+  .record-item { cursor: pointer; transition: transform .12s ease; }
+  .record-item:active { transform: scale(.985); }
+
+  .record-tabs {
+    flex: none;
+    display: flex; gap: 8px;
+    padding: 10px 16px 0;
+  }
+  .record-tab {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 0; border-radius: 12px;
+    font-size: 14px; font-weight: 700; color: var(--ink-400);
+    cursor: pointer; transition: all .15s ease;
+  }
+  .record-tab.active {
+    background: #fff; color: var(--green-600); box-shadow: var(--shadow-sm);
+  }
+  .rt-badge {
+    min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+    background: var(--green-100); color: var(--green-600);
+    font-size: 11px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .record-tab.active .rt-badge { background: var(--green-600); color: #fff; }
+  .record-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    padding: 56px 20px; text-align: center;
+    color: var(--ink-400); font-size: 13px;
+  }
+  .record-empty svg { display: block; }
+
+  .record-detail-overlay {
+    position: absolute; top: 44px; left: 0; right: 0; bottom: 0; z-index: 49;
+    background: var(--bg); display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .record-detail-overlay.show { transform: translateX(0); }
+  .record-detail-body { flex: 1; overflow-y: auto; padding: 18px 16px 12px; }
+  .rd-status-card {
+    background: #fff; border-radius: var(--radius-md); padding: 22px 16px;
+    box-shadow: var(--shadow-sm); margin-bottom: 14px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .rd-status-icon {
+    width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 10px;
+  }
+  .rd-status-icon.done { background: var(--green-100); color: var(--green-600); }
+  .rd-status-icon.doing { background: var(--blue-100); color: var(--blue-500); }
+  .rd-status-title { font-size: 18px; font-weight: 800; color: var(--ink-900); }
+  .rd-status-sub { font-size: 12.5px; color: var(--ink-400); margin-top: 4px; }
+  .rd-card { background: #fff; border-radius: var(--radius-md); padding: 6px 16px; box-shadow: var(--shadow-sm); margin-bottom: 14px; }
+  .rd-card-title { font-size: 14px; font-weight: 800; color: var(--ink-900); padding: 14px 0 4px; }
+  .rd-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; gap: 16px;
+  }
+  .rd-row:last-child { border-bottom: 0; }
+  .rd-row .r-label { color: var(--ink-600); flex: none; }
+  .rd-row .r-value { color: var(--ink-900); font-weight: 600; text-align: right; word-break: break-all; }
+  .rd-row .r-value.fee { font-size: 16px; font-weight: 800; color: var(--green-600); }
+  .rd-pay-tag {
+    display: inline-flex; align-items: center;
+    font-size: 12px; font-weight: 700; color: var(--green-600);
+    background: var(--green-100); padding: 3px 9px; border-radius: 999px;
+  }
+  .record-detail-footer {
+    flex: none; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: #fff; border-top: 1px solid var(--line);
+  }
+  .rd-done-btn {
+    width: 100%; padding: 15px 0; border-radius: 14px; border: none;
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    color: #fff; font-size: 16px; font-weight: 800;
+    box-shadow: 0 6px 16px rgba(14,143,92,.28); cursor: pointer;
+  }
+  .rd-done-btn:active { transform: scale(.98); }
+
+  /* ===== 服务协议 ===== */
+  .agreement-overlay {
+    position: absolute; top: 44px; left: 0; right: 0; bottom: 0; z-index: 49;
+    background: var(--bg); display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .agreement-overlay.show { transform: translateX(0); }
+  .agreement-tabs { flex: none; display: flex; gap: 8px; padding: 10px 16px 0; }
+  .agreement-tab {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 10px 0; border-radius: 12px;
+    font-size: 14px; font-weight: 700; color: var(--ink-400);
+    cursor: pointer; transition: all .15s ease;
+  }
+  .agreement-tab.active { background: #fff; color: var(--green-600); box-shadow: var(--shadow-sm); }
+  .agreement-body {
+    flex: 1; overflow-y: auto; margin: 12px 16px 16px;
+    background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+    padding: 18px 16px 24px;
+  }
+  .agreement-title { font-size: 17px; font-weight: 800; color: var(--ink-900); margin-bottom: 14px; }
+  .agreement-para { font-size: 13.5px; color: var(--ink-600); line-height: 1.8; margin-bottom: 12px; }
+
+  /* ===== 使用充电券（入口 + 选择弹层） ===== */
+  .coupon-entry {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: #fff; cursor: pointer;
+  }
+  .coupon-entry-label { font-size: 14px; font-weight: 700; color: var(--green-600); }
+  .coupon-entry-arrow { font-size: 20px; color: var(--ink-300); line-height: 1; }
+
+  .coupon-sheet { position: absolute; inset: 0; z-index: 66; display: none; }
+  .coupon-sheet.show { display: block; }
+  .coupon-sheet__mask {
+    position: absolute; inset: 0; background: rgba(15,32,26,.45);
+    opacity: 0; transition: opacity .25s ease;
+  }
+  .coupon-sheet.show .coupon-sheet__mask { opacity: 1; }
+  .coupon-sheet__panel {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: #fff; border-radius: 20px 20px 0 0;
+    transform: translateY(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+    padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+    max-height: 70%; display: flex; flex-direction: column;
+  }
+  .coupon-sheet.show .coupon-sheet__panel { transform: translateY(0); }
+  .coupon-sheet__handle { width: 40px; height: 4px; border-radius: 2px; background: var(--line); margin: 6px auto 0; }
+  .coupon-sheet__head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 4px 8px; font-size: 16px; font-weight: 800; color: var(--ink-900);
+  }
+  .coupon-sheet__close { font-size: 22px; color: var(--ink-400); cursor: pointer; line-height: 1; }
+  .coupon-sheet__list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .picker-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    cursor: pointer; background: #fff;
+  }
+  .picker-item.active { border-color: var(--green-500); background: var(--green-50); }
+  .picker-item__label { font-size: 14px; font-weight: 700; color: var(--ink-900); }
+  .picker-item__amount { font-size: 18px; font-weight: 800; color: var(--green-600); }
+  .picker-item__meta { font-size: 12px; color: var(--ink-400); margin-top: 2px; }
+  .picker-item__check { color: var(--green-600); font-size: 16px; font-weight: 800; display: none; }
+  .picker-item.active .picker-item__check { display: block; }
+  .picker-empty { text-align: center; color: var(--ink-400); font-size: 13px; padding: 20px 0; }
+
+  /* ===== 积分中心 ===== */
+  .points-overlay, .points-detail-overlay {
+    position: absolute; top: 44px; left: 0; right: 0; bottom: 0; z-index: 49;
+    background: var(--bg); display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .points-overlay.show, .points-detail-overlay.show { transform: translateX(0); }
+  .points-body { flex: 1; overflow-y: auto; padding: 16px; }
+  .points-balance-card {
+    border-radius: var(--radius-lg); padding: 20px;
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    color: #fff; box-shadow: 0 8px 20px rgba(217,119,6,.25);
+    margin-bottom: 16px;
+  }
+  .pb-label { font-size: 13px; color: rgba(255,255,255,.9); }
+  .pb-value { font-size: 38px; font-weight: 800; margin: 8px 0 12px; letter-spacing: .5px; }
+  .pb-detail { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.95); cursor: pointer; display: inline-flex; align-items: center; gap: 3px; }
+  .points-section { background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: 16px; margin-bottom: 16px; }
+  .checkin { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .checkin-title { font-size: 15px; font-weight: 800; color: var(--ink-900); }
+  .checkin-desc { font-size: 12px; color: var(--ink-400); margin-top: 4px; }
+  .checkin-btn {
+    flex: none; padding: 11px 18px; border-radius: 999px; border: none;
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    color: #fff; font-size: 14px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 6px 14px rgba(14,143,92,.25);
+  }
+  .checkin-btn.done { background: #E7ECE9; color: var(--ink-400); box-shadow: none; cursor: default; }
+  .exchange-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .exchange-item:last-child { border-bottom: 0; }
+  .ex-ico {
+    width: 52px; height: 40px; border-radius: 8px; flex: none;
+    background: var(--green-100); color: var(--green-600);
+    display: grid; place-items: center; font-size: 14px; font-weight: 800;
+  }
+  .ex-info { flex: 1; }
+  .ex-name { font-size: 14px; font-weight: 700; color: var(--ink-900); }
+  .ex-points { font-size: 12px; color: var(--orange); margin-top: 3px; font-weight: 700; }
+  .ex-btn {
+    flex: none; padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--green-500);
+    background: #fff; color: var(--green-600); font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .ex-btn:active { background: var(--green-50); }
+
+  /* ===== 积分明细 ===== */
+  .points-detail-body { flex: 1; overflow-y: auto; padding: 16px; }
+  .points-log-item {
+    background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+    padding: 14px 16px; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .pl-desc { font-size: 14px; font-weight: 700; color: var(--ink-900); }
+  .pl-time { font-size: 12px; color: var(--ink-300); margin-top: 4px; }
+  .pl-points { font-size: 16px; font-weight: 800; flex: none; }
+  .pl-points.plus { color: var(--green-600); }
+  .pl-points.minus { color: #E11D48; }
+
+  /* ===== 充电券列表 ===== */
+  .coupon-page-overlay {
+    position: absolute; top: 44px; left: 0; right: 0; bottom: 0; z-index: 49;
+    background: var(--bg); display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .coupon-page-overlay.show { transform: translateX(0); }
+  .coupon-page-body { flex: 1; overflow-y: auto; padding: 14px 16px; }
+  .coupon-card {
+    background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+    padding: 16px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    border-left: 4px solid var(--green-500);
+  }
+  .coupon-card.expired { border-left-color: var(--ink-300); }
+  .cc-amount { font-size: 26px; font-weight: 800; color: var(--green-600); }
+  .coupon-card.expired .cc-amount { color: var(--ink-300); }
+  .cc-name { font-size: 12px; color: var(--ink-400); margin-top: 2px; }
+  .cc-right { text-align: right; }
+  .cc-expire { font-size: 12px; color: var(--ink-400); }
+  .cc-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; margin-top: 8px; }
+  .coupon-card:not(.expired) .cc-tag { background: var(--green-100); color: var(--green-600); }
+  .coupon-card.expired .cc-tag { background: #F2F4F3; color: var(--ink-300); }
+
+  /* ===== 确认弹窗 ===== */
+  .confirm-modal { position: absolute; inset: 0; z-index: 68; display: none; }
+  .confirm-modal.show { display: block; }
+  .confirm-mask { position: absolute; inset: 0; background: rgba(15,32,26,.45); }
+  .confirm-dialog {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px; background: #fff; border-radius: 16px; padding: 24px 20px 16px;
+    text-align: center;
+  }
+  .confirm-title { font-size: 17px; font-weight: 800; color: var(--ink-900); }
+  .confirm-desc { font-size: 13px; color: var(--ink-400); margin-top: 8px; line-height: 1.5; }
+  .confirm-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .confirm-btn { flex: 1; padding: 11px 0; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .confirm-btn.cancel { background: #F2F4F3; color: var(--ink-600); border: none; }
+  .confirm-btn.ok { background: #E11D48; color: #fff; border: none; }
+
+  /* ===== 系统消息 ===== */
+  .messages-overlay {
+    position: absolute; top: 44px; left: 0; right: 0; bottom: 0; z-index: 49;
+    background: var(--bg); display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .messages-overlay.show { transform: translateX(0); }
+  .messages-body { flex: 1; overflow-y: auto; padding: 16px; }
+  .msg-item {
+    background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+    padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+  }
+  .msg-item.unread { border-left: 3px solid var(--green-500); }
+  .msg-head { display: flex; align-items: center; gap: 8px; }
+  .msg-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-500); flex: none; }
+  .msg-title { font-size: 15px; font-weight: 700; color: var(--ink-900); flex: 1; }
+  .msg-time { font-size: 12px; color: var(--ink-300); flex: none; }
+  .msg-content { font-size: 13px; color: var(--ink-400); line-height: 1.6; margin-top: 6px; }
+
+  /* ===== 模拟扫码按钮 ===== */
+  .scan-sim-btn {
+    flex: none;
+    width: 100%; max-width: 250px;
+    padding: 13px 0; border-radius: 999px; border: 1.5px solid rgba(255,255,255,.4);
+    background: transparent; color: #fff; font-size: 15px; font-weight: 700;
+    cursor: pointer; margin-top: 4px;
+  }
+  .scan-sim-btn:active { background: rgba(255,255,255,.12); }
+
+  /* ===== 广告模块 ===== */
+  .ad-tag {
+    flex: none;
+    font-size: 10px; font-weight: 600; line-height: 1.4;
+    color: var(--ink-400); border: 1px solid var(--line);
+    padding: 1px 5px; border-radius: 4px;
+  }
+
+  /* 开屏广告 */
+  .splash-ad {
+    position: absolute; inset: 0; z-index: 95;
+    background: linear-gradient(160deg, #0F2C22 0%, #145238 55%, #1E7A55 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 70px 32px 48px;
+    transition: opacity .45s ease;
+  }
+  .splash-ad.hide { opacity: 0; pointer-events: none; }
+  .splash-ad__art { width: 236px; height: 236px; margin-bottom: 32px; }
+  .splash-ad__art svg { width: 100%; height: 100%; }
+  .splash-ad__brand { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: 1px; }
+  .splash-ad__slogan { font-size: 14px; color: rgba(255,255,255,.8); margin-top: 10px; }
+  .splash-ad__tag {
+    position: absolute; top: 54px; left: 18px;
+    font-size: 11px; color: rgba(255,255,255,.75);
+    border: 1px solid rgba(255,255,255,.4); padding: 2px 8px; border-radius: 4px;
+  }
+  .splash-ad__skip {
+    position: absolute; top: 46px; right: 18px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(0,0,0,.35); color: #fff;
+    font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  }
+  .splash-ad__cta {
+    position: absolute; bottom: 58px;
+    padding: 12px 40px; border-radius: 999px;
+    background: #fff; color: #145238;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+  }
+
+  /* 横幅广告 */
+  .ad-banner {
+    position: relative;
+    display: flex; align-items: center; gap: 12px;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-md); padding: 12px 14px;
+    margin-bottom: 16px; cursor: pointer; box-shadow: var(--shadow-sm);
+  }
+  .ad-banner__art {
+    width: 48px; height: 48px; border-radius: 10px; flex: none;
+    display: grid; place-items: center; color: #fff;
+  }
+  .ad-banner__body { flex: 1; min-width: 0; }
+  .ad-banner__title { font-size: 14px; font-weight: 700; color: var(--ink-900); }
+  .ad-banner__desc { font-size: 12px; color: var(--ink-400); margin-top: 3px; }
+  .ad-banner__btn {
+    flex: none; font-size: 12px; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    padding: 6px 12px; border-radius: 999px;
+  }
+  .ad-banner .ad-tag { position: absolute; top: 6px; right: 8px; }
+  .login-ad { position: absolute; left: 16px; right: 16px; bottom: 20px; }
+  .login-ad .ad-banner { margin-bottom: 0; }
+
+  /* 原生广告（信息流） */
+  .ad-native {
+    background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+    padding: 14px 16px; margin-bottom: 12px; cursor: pointer;
+  }
+  .ad-native__head { display: flex; align-items: center; gap: 8px; }
+  .ad-native__avatar {
+    width: 22px; height: 22px; border-radius: 50%; flex: none;
+    background: var(--green-100); color: var(--green-600);
+    display: grid; place-items: center; font-size: 12px; font-weight: 800;
+  }
+  .ad-native__name { font-size: 13px; font-weight: 700; color: var(--ink-600); flex: 1; }
+  .ad-native__title { font-size: 15px; font-weight: 700; color: var(--ink-900); margin-top: 10px; }
+  .ad-native__img {
+    margin-top: 10px; height: 90px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; font-weight: 700;
+  }
+  .ad-native__cta { font-size: 12px; font-weight: 700; color: var(--green-600); margin-top: 10px; }
+
+  /* ===== 每日任务 ===== */
+  .task-list { display: flex; flex-direction: column; gap: 12px; }
+  .task-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+  }
+  .task-item:last-child { border-bottom: 0; }
+  .task-ico {
+    width: 40px; height: 40px; border-radius: 11px; flex: none;
+    display: grid; place-items: center; font-size: 13px; font-weight: 800;
+  }
+  .task-ico.charge { background: var(--green-100); color: var(--green-600); }
+  .task-ico.video { background: #EAF6FF; color: #0EA5E9; }
+  .task-info { flex: 1; min-width: 0; }
+  .task-title { font-size: 14px; font-weight: 700; color: var(--ink-900); }
+  .task-progress { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .task-bar { flex: 1; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .task-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--green-400), var(--green-600)); }
+  .task-num { font-size: 11px; color: var(--ink-400); flex: none; }
+  .task-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: none; }
+  .task-reward { font-size: 13px; font-weight: 800; color: var(--orange); }
+  .task-btn {
+    flex: none; padding: 6px 14px; border-radius: 999px; border: none;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .task-btn.do { background: linear-gradient(135deg, var(--green-500), var(--green-600)); color: #fff; }
+  .task-btn.claim { background: #fff; border: 1.5px solid var(--orange); color: var(--orange); }
+  .task-btn.claimed { background: #F2F4F3; color: var(--ink-300); cursor: default; }
 
   @media (max-width: 480px) {
     body { padding: 0; }
@@ -1149,7 +1684,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M9 9h6M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
               </div>
               <div class="quick-txt">
-                <div class="quick-title">充电记录</div>
+                <div class="quick-title">充电列表</div>
                 <div class="quick-sub">查看历史订单</div>
               </div>
             </div>
@@ -1162,6 +1697,28 @@
                 <div class="quick-sub">常用充电站点</div>
               </div>
             </div>
+            <div class="quick-card" onclick="openPointsCenter()">
+              <div class="quick-ico signin">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M8 3v4M16 3v4M4 10h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 15l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="quick-txt">
+                <div class="quick-title">每日签到</div>
+                <div class="quick-sub">签到领积分</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 广告 -->
+          <div class="ad-banner" onclick="toast('广告落地页（下一步设计）')">
+            <div class="ad-banner__art" style="background:linear-gradient(135deg,#FF9A5C,#FF5E3A)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13 2 5 14h6l-1 8 8-12h-6l1-8Z" fill="currentColor"/></svg>
+            </div>
+            <div class="ad-banner__body">
+              <div class="ad-banner__title">小牛电动车 · 以旧换新</div>
+              <div class="ad-banner__desc">旧车最高抵 1000 元，到店即享</div>
+            </div>
+            <div class="ad-banner__btn">去看看</div>
+            <span class="ad-tag">广告</span>
           </div>
 
           <!-- 站点列表 -->
@@ -1178,15 +1735,16 @@
         <div class="mine-main">
           <!-- 用户信息 -->
           <div class="mine-header">
-            <div class="avatar">
+            <div class="avatar" onclick="maybeLogin()">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c.5-3.5 3.5-5.5 8-5.5s7.5 2 8 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
             </div>
-            <div class="user-info">
-              <div class="nickname">微信用户</div>
-              <div class="user-phone">138****8888</div>
+            <div class="user-info" id="userInfo" onclick="maybeLogin()">
+              <div class="nickname" id="nickname">登录</div>
+              <div class="user-phone" id="userPhone">登录后开启充电之旅</div>
             </div>
-            <div class="edit" onclick="toast('编辑资料（下一步设计）')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 20h4L19 9l-4-4L4 16v4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <div class="notify" onclick="openMessages()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span class="notify-badge" id="notifyBadge">2</span>
             </div>
           </div>
 
@@ -1194,44 +1752,54 @@
           <div class="wallet-card">
             <div class="wallet-top">
               <span>钱包余额（元）</span>
-              <span class="wallet-help" onclick="toast('余额用于充电自动扣费')">?</span>
+              <span class="wallet-points">积分 <b id="minePoints">2680</b></span>
             </div>
             <div class="wallet-amount" id="mineBalance">¥68.50</div>
             <button class="wallet-btn" onclick="goRecharge()">立即充值</button>
           </div>
 
-          <!-- 功能菜单 -->
-          <div class="menu-card">
-            <div class="menu-item" onclick="goRecharge()">
-              <div class="menu-icon recharge">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="1.8"/><path d="M16 11h2a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-2" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4m0 0-1.5-1.5M12 12l1.5-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <!-- 金刚区 -->
+          <div class="kingkong">
+            <div class="kingkong-item" onclick="openPointsCenter()">
+              <div class="kingkong-ico points">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.7l5.9-.9L12 3.5z" fill="currentColor" stroke="none"/></svg>
               </div>
-              <span class="menu-text">充值中心</span>
-              <svg class="menu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="kingkong-txt">积分中心</div>
             </div>
-            <div class="menu-item" onclick="goRecord()">
-              <div class="menu-icon record">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div class="kingkong-item" onclick="goRecharge()">
+              <div class="kingkong-ico recharge">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z" stroke="currentColor" stroke-width="1.8"/><path d="M16 11h2a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-2" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4m0 0-1.5-1.5M12 12l1.5-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
-              <span class="menu-text">充电记录</span>
-              <svg class="menu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="kingkong-txt">充值中心</div>
             </div>
-            <div class="menu-item" onclick="goFrequent()">
-              <div class="menu-icon frequent">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M9 9.5 12 10l1.8 1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="kingkong-item" onclick="goRecord()">
+              <div class="kingkong-ico record">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
               </div>
-              <span class="menu-text">常用电站</span>
-              <svg class="menu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="kingkong-txt">充电列表</div>
+            </div>
+            <div class="kingkong-item" onclick="goFrequent()">
+              <div class="kingkong-ico frequent">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.1 7-11a7 7 0 1 0-14 0c0 5.9 7 11 7 11Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
+              </div>
+              <div class="kingkong-txt">常用电站</div>
             </div>
           </div>
 
           <!-- 更多 -->
           <div class="menu-card">
-            <div class="menu-item" onclick="toast('我的优惠券（下一步设计）')">
+            <div class="menu-item" onclick="openCouponPage()">
               <div class="menu-icon coupon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1a2.5 2.5 0 0 0 0-5V8Z" stroke="currentColor" stroke-width="1.8"/><path d="M15 8v.01M15 15v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
               </div>
-              <span class="menu-text">我的优惠券</span>
+              <span class="menu-text">充电券</span>
+              <svg class="menu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="menu-item" onclick="openAgreement()">
+              <div class="menu-icon service">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v4h4M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </div>
+              <span class="menu-text">服务协议</span>
               <svg class="menu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
             <div class="menu-item" onclick="toast('帮助与客服（下一步设计）')">
@@ -1248,6 +1816,26 @@
               <span class="menu-text">关于我们</span>
               <svg class="menu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
+            <div class="menu-item" id="logoutItem" onclick="openLogoutConfirm()">
+              <div class="menu-icon logout">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 4H8a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 12h8m0 0-2.5-2.5M20 12l-2.5 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="menu-text logout">退出登录</span>
+              <svg class="menu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <!-- 广告 -->
+          <div class="ad-banner" onclick="toast('广告落地页（下一步设计）')">
+            <div class="ad-banner__art" style="background:linear-gradient(135deg,#5CA8FF,#3A7BFF)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="ad-banner__body">
+              <div class="ad-banner__title">骑行无忧保险</div>
+              <div class="ad-banner__desc">9.9 元起 · 骑行意外保障</div>
+            </div>
+            <div class="ad-banner__btn">去投保</div>
+            <span class="ad-tag">广告</span>
           </div>
         </div>
       </section>
@@ -1398,10 +1986,33 @@
           </div>
         </div>
 
+        <!-- 使用充电券 -->
+        <div class="detail-section" id="couponSection">
+          <div class="section-title">使用充电券</div>
+          <div class="coupon-entry" onclick="openCouponPicker()">
+            <span class="coupon-entry-label" id="couponEntryLabel">不使用优惠券</span>
+            <span class="coupon-entry-arrow">›</span>
+          </div>
+        </div>
+
         <!-- 自定义时长 -->
         <div class="detail-section" id="customSection" hidden>
           <div class="section-title">自定义时长（1-10 小时）</div>
           <div class="custom-hours" id="customHours"></div>
+        </div>
+
+        <!-- 广告 -->
+        <div class="ad-native" onclick="toast('广告落地页（下一步设计）')">
+          <div class="ad-native__head">
+            <div class="ad-native__avatar">星</div>
+            <span class="ad-native__name">星恒电池</span>
+            <span class="ad-tag">广告</span>
+          </div>
+          <div class="ad-native__title">租电池 · 换电无忧</div>
+          <div class="ad-native__img" style="background:linear-gradient(135deg,#A78BFA,#7C6BF0)">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="18" rx="2.5" stroke="currentColor" stroke-width="1.8"/><rect x="9" y="6" width="6" height="9" rx="1" fill="currentColor" fill-opacity=".5"/><rect x="14.5" y="6" width="3" height="5" rx="1" fill="currentColor"/></svg>
+          </div>
+          <div class="ad-native__cta">立即了解 ›</div>
         </div>
 
         <!-- 计费说明 -->
@@ -1453,6 +2064,19 @@
           <div class="rb-amount" id="rechargeBalance">¥68.50</div>
         </div>
 
+        <!-- 广告 -->
+        <div class="ad-banner" onclick="toast('广告落地页（下一步设计）')">
+          <div class="ad-banner__art" style="background:linear-gradient(135deg,#34C98C,#0E8F5C)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 9h16v3H4z" fill="currentColor"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7M12 12v8M3 9l1-4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1l1 4" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="ad-banner__body">
+            <div class="ad-banner__title">充值有礼</div>
+            <div class="ad-banner__desc">充值满 100 元赠 5 元充电券</div>
+          </div>
+          <div class="ad-banner__btn">去充值</div>
+          <span class="ad-tag">广告</span>
+        </div>
+
         <!-- 固定金额 -->
         <div class="recharge-section">
           <div class="rs-title">选择充值金额</div>
@@ -1492,14 +2116,18 @@
       </div>
     </div>
 
-    <!-- 充电记录 -->
+    <!-- 充电列表 -->
     <div class="record-overlay" id="recordOverlay">
       <div class="detail-header">
         <div class="detail-back" onclick="hideRecord()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div class="detail-title">充电记录</div>
+        <div class="detail-title">充电列表</div>
         <div class="detail-placeholder"></div>
+      </div>
+      <div class="record-tabs">
+        <div class="record-tab active" id="tabDoing" onclick="switchRecordTab('doing', this)">正在充电<span class="rt-badge" id="doingBadge">0</span></div>
+        <div class="record-tab" id="tabHistory" onclick="switchRecordTab('history', this)">历史充电<span class="rt-badge" id="historyBadge">0</span></div>
       </div>
       <div class="record-body" id="recordBody"></div>
     </div>
@@ -1556,11 +2184,323 @@
           </svg>
         </div>
         <div class="scan-hint">扫描成功后自动进入充电详情</div>
+        <button class="scan-sim-btn" onclick="simulateScan()">模拟扫码</button>
       </div>
+    </div>
+
+    <!-- 授权登录 -->
+    <div class="login-overlay hide" id="loginOverlay">
+      <div class="login-logo">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M13 2 5 14h6l-1 8 8-12h-6l1-8Z" fill="currentColor"/></svg>
+      </div>
+      <div class="login-brand">绿能充电</div>
+      <div class="login-slogan">两轮电动车 · 充电无忧</div>
+
+      <div class="login-scope">
+        <div class="login-scope__title">申请获取以下授权</div>
+        <div class="login-scope__item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c.5-3.5 3.5-5.5 8-5.5s7.5 2 8 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          获取你的微信头像、昵称
+        </div>
+        <div class="login-scope__item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="6" y="3" width="12" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="9" y="7" width="6" height="10" rx="1" stroke="currentColor" stroke-width="1.6"/></svg>
+          用于识别身份与订单结算
+        </div>
+      </div>
+
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v1H8V5ZM6 6h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span id="loginBtnText">微信一键登录</span>
+      </button>
+      <div class="login-skip" onclick="skipLogin()">暂不登录，先逛逛</div>
+      <div class="login-agree">登录即代表同意《用户协议》与《隐私政策》<br/>本页面为原型演示，不会真实获取任何信息</div>
+
+      <!-- 广告 -->
+      <div class="login-ad">
+        <div class="ad-banner" onclick="toast('广告落地页（下一步设计）')">
+          <div class="ad-banner__art" style="background:linear-gradient(135deg,#F59E0B,#D97706)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v11M12 14v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 8l4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="ad-banner__body">
+            <div class="ad-banner__title">新用户专享礼包</div>
+            <div class="ad-banner__desc">注册即领 5 元充电券</div>
+          </div>
+          <div class="ad-banner__btn">立即领</div>
+          <span class="ad-tag">广告</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 充电进行中 -->
+    <div class="charging-overlay" id="chargingOverlay">
+      <div class="detail-header">
+        <div class="detail-back" onclick="hideCharging()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="detail-title">充电进行中</div>
+        <div class="detail-placeholder"></div>
+      </div>
+      <div class="charging-body">
+        <div class="charging-station">
+          <div class="cs-left">
+            <div class="cs-name" id="chgStationName">站点名称</div>
+            <div class="cs-socket" id="chgSocket">插座 1 号</div>
+          </div>
+          <div class="charging-status-badge"><span class="dot-pulse"></span>充电中</div>
+        </div>
+
+        <div class="charging-illust">
+          <div class="charging-illust__art">
+            <svg viewBox="0 0 132 132" fill="none">
+              <defs>
+                <linearGradient id="illGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#34C98C"/>
+                  <stop offset="1" stop-color="#0E8F5C"/>
+                </linearGradient>
+              </defs>
+              <circle cx="66" cy="66" r="58" fill="#FFFFFF" stroke="#E7EDE9" stroke-width="1.5"/>
+              <path d="M30 96 C 30 114, 44 120, 66 120 C 88 120, 102 114, 102 96" stroke="#C9E9DA" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <rect x="99" y="53" width="8" height="12" rx="2.5" fill="#0E8F5C"/>
+              <rect x="33" y="43" width="66" height="32" rx="8" fill="#F0FAF4" stroke="#14A46B" stroke-width="2.5"/>
+              <rect x="39" y="49" width="46" height="20" rx="5" fill="url(#illGrad)"/>
+              <path class="ill-bolt" d="M64 46 L52 61 h7 l-2.5 10 10.5 -12 h-7 l4 -11 Z" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <div class="charging-illust__status"><span class="dot-pulse"></span>正在充电中</div>
+          <div class="charging-illust__time" id="chgElapsed">00:00</div>
+          <div class="charging-illust__label">已充时长</div>
+        </div>
+
+        <div class="charging-metrics">
+          <div class="charging-metric">
+            <div class="cm-value" id="chgDuration">00:00</div>
+            <div class="cm-label">充电时长</div>
+          </div>
+          <div class="charging-metric">
+            <div class="cm-value" id="chgSelect">—</div>
+            <div class="cm-label">充电选择</div>
+          </div>
+          <div class="charging-metric">
+            <div class="cm-value" id="chgFee">¥0.00</div>
+            <div class="cm-label">充电消费（元）</div>
+          </div>
+        </div>
+
+        <div class="charging-tip" id="chgTip">按实际充电时长计费，充电结束后自动从钱包余额扣除。</div>
+
+        <!-- 广告 -->
+        <div class="ad-banner" onclick="toast('广告落地页（下一步设计）')">
+          <div class="ad-banner__art" style="background:linear-gradient(135deg,#A78BFA,#7C6BF0)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="18" rx="2.5" stroke="currentColor" stroke-width="1.8"/><rect x="9" y="6" width="6" height="9" rx="1" fill="currentColor" fill-opacity=".5"/><rect x="14.5" y="6" width="3" height="5" rx="1" fill="currentColor"/></svg>
+          </div>
+          <div class="ad-banner__body">
+            <div class="ad-banner__title">星恒电池 · 租电池</div>
+            <div class="ad-banner__desc">月租低至 39 元，换电无忧</div>
+          </div>
+          <div class="ad-banner__btn">去看看</div>
+          <span class="ad-tag">广告</span>
+        </div>
+      </div>
+      <div class="charging-footer">
+        <button class="stop-btn" onclick="endCharge()">结束充电</button>
+      </div>
+    </div>
+
+    <!-- 订单详情 -->
+    <div class="record-detail-overlay" id="recordDetailOverlay">
+      <div class="detail-header">
+        <div class="detail-back" onclick="hideRecordDetail()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="detail-title">订单详情</div>
+        <div class="detail-placeholder"></div>
+      </div>
+      <div class="record-detail-body">
+        <div class="rd-status-card">
+          <div class="rd-status-icon done" id="rdStatusIcon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="rd-status-title" id="rdStatusTitle">已完成</div>
+          <div class="rd-status-sub" id="rdStatusSub">充电订单已完成结算</div>
+        </div>
+
+        <div class="rd-card">
+          <div class="rd-card-title">充电信息</div>
+          <div class="rd-row"><span class="r-label">充电站点</span><span class="r-value" id="rdStation">—</span></div>
+          <div class="rd-row"><span class="r-label">充电插座</span><span class="r-value" id="rdSocket">—</span></div>
+          <div class="rd-row"><span class="r-label">额定功率</span><span class="r-value" id="rdPower">—</span></div>
+          <div class="rd-row"><span class="r-label">充电方式</span><span class="r-value" id="rdMode">—</span></div>
+          <div class="rd-row"><span class="r-label">充电时长</span><span class="r-value" id="rdDuration">—</span></div>
+        </div>
+
+        <div class="rd-card">
+          <div class="rd-card-title">订单信息</div>
+          <div class="rd-row"><span class="r-label">订单编号</span><span class="r-value" id="rdOrderNo">—</span></div>
+          <div class="rd-row"><span class="r-label">开始时间</span><span class="r-value" id="rdStart">—</span></div>
+          <div class="rd-row"><span class="r-label">结束时间</span><span class="r-value" id="rdEnd">—</span></div>
+          <div class="rd-row"><span class="r-label">支付方式</span><span class="r-value"><span class="rd-pay-tag">余额支付</span></span></div>
+          <div class="rd-row"><span class="r-label">实付金额</span><span class="r-value fee" id="rdFee">-¥0.00</span></div>
+        </div>
+
+        <!-- 广告 -->
+        <div class="ad-banner" onclick="toast('广告落地页（下一步设计）')">
+          <div class="ad-banner__art" style="background:linear-gradient(135deg,#FF9A5C,#FF5E3A)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M19 8v6M22 11h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <div class="ad-banner__body">
+            <div class="ad-banner__title">邀请好友得积分</div>
+            <div class="ad-banner__desc">双方各得 20 积分，上不封顶</div>
+          </div>
+          <div class="ad-banner__btn">去邀请</div>
+          <span class="ad-tag">广告</span>
+        </div>
+      </div>
+      <div class="record-detail-footer">
+        <button class="rd-done-btn" onclick="exitRecordDetail()">返回首页</button>
+      </div>
+    </div>
+
+    <!-- 服务协议 -->
+    <div class="agreement-overlay" id="agreementOverlay">
+      <div class="detail-header">
+        <div class="detail-back" onclick="hideAgreement()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="detail-title">服务协议</div>
+        <div class="detail-placeholder"></div>
+      </div>
+      <div class="agreement-tabs" id="agreementTabs">
+        <div class="agreement-tab active" onclick="switchAgreementTab('service', this)">服务协议</div>
+        <div class="agreement-tab" onclick="switchAgreementTab('privacy', this)">隐私政策</div>
+      </div>
+      <div class="agreement-body" id="agreementBody"></div>
+    </div>
+
+    <!-- 积分中心 -->
+    <div class="points-overlay" id="pointsOverlay">
+      <div class="detail-header">
+        <div class="detail-back" onclick="hidePointsCenter()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="detail-title">积分中心</div>
+        <div class="detail-placeholder"></div>
+      </div>
+      <div class="points-body">
+        <div class="points-balance-card">
+          <div class="pb-label">当前积分</div>
+          <div class="pb-value" id="pointsBalance">0</div>
+          <div class="pb-detail" onclick="openPointsDetail()">积分明细 ›</div>
+        </div>
+
+        <div class="points-section">
+          <div class="checkin">
+            <div>
+              <div class="checkin-title">每日签到领积分</div>
+              <div class="checkin-desc">每天签到，积分多多</div>
+            </div>
+            <button class="checkin-btn" id="checkinBtn" onclick="doCheckin()">签到 +10</button>
+          </div>
+        </div>
+
+        <div class="points-section">
+          <div class="section-title">每日任务</div>
+          <div class="task-list" id="dailyTaskList"></div>
+        </div>
+
+        <div class="points-section">
+          <div class="section-title">积分兑换</div>
+          <div class="exchange-list" id="exchangeList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 积分明细 -->
+    <div class="points-detail-overlay" id="pointsDetailOverlay">
+      <div class="detail-header">
+        <div class="detail-back" onclick="hidePointsDetail()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="detail-title">积分明细</div>
+        <div class="detail-placeholder"></div>
+      </div>
+      <div class="points-detail-body" id="pointsDetailBody"></div>
+    </div>
+
+    <!-- 充电券列表 -->
+    <div class="coupon-page-overlay" id="couponPageOverlay">
+      <div class="detail-header">
+        <div class="detail-back" onclick="hideCouponPage()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="detail-title">充电券</div>
+        <div class="detail-placeholder"></div>
+      </div>
+      <div class="record-tabs">
+        <div class="record-tab active" id="tabAvailable" onclick="switchCouponTab('available', this)">待使用<span class="rt-badge" id="availableBadge">0</span></div>
+        <div class="record-tab" id="tabExpired" onclick="switchCouponTab('expired', this)">已过期<span class="rt-badge" id="expiredBadge">0</span></div>
+      </div>
+      <div class="coupon-page-body" id="couponPageBody"></div>
+    </div>
+
+    <!-- 退出登录确认 -->
+    <div class="confirm-modal" id="logoutModal">
+      <div class="confirm-mask" onclick="closeLogoutConfirm()"></div>
+      <div class="confirm-dialog">
+        <div class="confirm-title">确认退出登录？</div>
+        <div class="confirm-desc">退出后需要重新登录才能使用充电服务</div>
+        <div class="confirm-actions">
+          <button class="confirm-btn cancel" onclick="closeLogoutConfirm()">取消</button>
+          <button class="confirm-btn ok" onclick="confirmLogout()">确认退出</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选择充电券弹层 -->
+    <div class="coupon-sheet" id="couponSheet">
+      <div class="coupon-sheet__mask" onclick="closeCouponPicker()"></div>
+      <div class="coupon-sheet__panel">
+        <div class="coupon-sheet__handle"></div>
+        <div class="coupon-sheet__head">
+          <span>选择充电券</span>
+          <span class="coupon-sheet__close" onclick="closeCouponPicker()">×</span>
+        </div>
+        <div class="coupon-sheet__list" id="couponPickerList"></div>
+      </div>
+    </div>
+
+    <!-- 系统消息 -->
+    <div class="messages-overlay" id="messagesOverlay">
+      <div class="detail-header">
+        <div class="detail-back" onclick="hideMessages()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="detail-title">系统消息</div>
+        <div class="detail-placeholder"></div>
+      </div>
+      <div class="messages-body" id="messagesBody"></div>
     </div>
 
     <!-- Toast -->
     <div class="toast" id="toast"></div>
+
+    <!-- 开屏广告 -->
+    <div class="splash-ad" id="splashAd">
+      <span class="splash-ad__tag">广告</span>
+      <button class="splash-ad__skip" id="splashSkip" onclick="skipSplash()">跳过 5s</button>
+      <div class="splash-ad__art">
+        <svg viewBox="0 0 240 240" fill="none">
+          <circle cx="120" cy="120" r="106" fill="rgba(255,255,255,.06)"/>
+          <circle cx="120" cy="120" r="84" fill="rgba(255,255,255,.05)"/>
+          <rect x="66" y="96" width="108" height="48" rx="12" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+          <rect x="174" y="110" width="12" height="20" rx="4" fill="#FFFFFF"/>
+          <rect x="76" y="106" width="88" height="28" rx="8" fill="#4ADE80"/>
+          <path d="M118 102 L100 128 h12 l-4 18 18 -20 h-12 l6 -24 Z" fill="#FFFFFF"/>
+        </svg>
+      </div>
+      <div class="splash-ad__brand">雅迪电动车</div>
+      <div class="splash-ad__slogan">焕新出发 · 以旧换新最高抵 800 元</div>
+      <div class="splash-ad__cta" onclick="toast('广告落地页（下一步设计）')">点击查看详情 ›</div>
+    </div>
   </div>
 
 <script>
@@ -1574,11 +2514,12 @@
   ];
 
   // 模拟充电记录
+  let nextRecordId = 1005;
   const CHARGE_RECORDS = [
-    { station: '星星充电 · 中央公园站', socket: 3, mode: '充满计费', duration: '5小时42分', fee: 27.36, time: '2026-10-12 18:30', status: '已完成' },
-    { station: '特来电 · 万象城站',     socket: 5, mode: '2小时',   duration: '2小时',   fee: 36.00, time: '2026-10-10 14:20', status: '已完成' },
-    { station: '国家电网 · 市民中心站',  socket: 8, mode: '4小时',   duration: '4小时',   fee: 36.00, time: '2026-10-08 09:15', status: '已完成' },
-    { station: '小桔充电 · 滨江公园站',  socket: 2, mode: '8小时',   duration: '8小时',   fee: 57.60, time: '2026-10-05 20:00', status: '已完成' }
+    { id: 1004, station: '星星充电 · 中央公园站', socket: 3, mode: '充满计费', duration: '5小时42分', fee: 27.36, time: '2026-10-12 18:30', endTime: '2026-10-13 00:12', power: 500,  status: '已完成' },
+    { id: 1003, station: '特来电 · 万象城站',     socket: 5, mode: '2小时',   duration: '2小时',   fee: 36.00, time: '2026-10-10 14:20', endTime: '2026-10-10 16:20', power: 2000, status: '已完成' },
+    { id: 1002, station: '国家电网 · 市民中心站',  socket: 8, mode: '4小时',   duration: '4小时',   fee: 36.00, time: '2026-10-08 09:15', endTime: '2026-10-08 13:15', power: 1000, status: '已完成' },
+    { id: 1001, station: '小桔充电 · 滨江公园站',  socket: 2, mode: '8小时',   duration: '8小时',   fee: 57.60, time: '2026-10-05 20:00', endTime: '2026-10-06 04:00', power: 800,  status: '已完成' }
   ];
 
   // 计费说明：不同额定功率充电器的计费标准（模拟数据）
@@ -1589,6 +2530,79 @@
     { power: 1000, min: 0.15, hour: 9.0 },
     { power: 2000, min: 0.30, hour: 18.0 }
   ];
+
+  // 积分与充电券
+  let POINTS = 2680;
+  let checkedIn = false;
+  const CHECKIN_REWARD = 10;
+  const TODAY = '2026-10-26';
+
+  const EXCHANGE_ITEMS = [
+    { amount: 1, points: 500 },
+    { amount: 2, points: 900 },
+    { amount: 3, points: 1300 },
+    { amount: 5, points: 2000 }
+  ];
+
+  const COUPON_WALLET = [
+    { id: 101, amount: 5, expire: '2026-12-31' },
+    { id: 102, amount: 2, expire: '2026-11-30' },
+    { id: 103, amount: 3, expire: '2026-09-30' },
+    { id: 104, amount: 1, expire: '2026-08-15' }
+  ];
+  let nextCouponId = 105;
+  let currentCouponId = null;
+
+  let POINTS_LOG = [
+    { time: '2026-10-24 10:20', desc: '每日签到', points: 10 },
+    { time: '2026-10-23 18:05', desc: '充电完成奖励', points: 5 },
+    { time: '2026-10-20 14:30', desc: '兑换 3元充电券', points: -1300 },
+    { time: '2026-10-15 09:00', desc: '每日签到', points: 10 },
+    { time: '2026-10-08 11:00', desc: '充电完成奖励', points: 5 }
+  ];
+
+  // 每日任务
+  let dailyChargedMinutes = 12;
+  let dailyTasks = [
+    { id: 1, type: 'charge', title: '充电满 30 分钟', reward: 20, target: 30, unit: '分钟', claimed: false },
+    { id: 2, type: 'video', title: '观看 15 秒视频广告', reward: 10, target: 1, progress: 0, unit: '条', claimed: false },
+    { id: 3, type: 'video', title: '观看 3 条视频广告', reward: 30, target: 3, progress: 0, unit: '条', claimed: false }
+  ];
+
+  // 系统消息
+  const MESSAGES = [
+    { id: 1, title: '充电完成提醒', content: '您在天安数码城站的充电已完成，共消费 ¥6.40，已从钱包余额扣除。', time: '2026-10-26 09:30', read: false },
+    { id: 2, title: '优惠券即将过期', content: '您有一张 5元充电券 即将在 3 天后过期，请及时使用。', time: '2026-10-25 18:00', read: false },
+    { id: 3, title: '积分签到提醒', content: '今日签到可领取 10 积分，别忘了来积分中心签到哦！', time: '2026-10-24 08:00', read: true },
+    { id: 4, title: '系统公告', content: '平台将于 10月28日 凌晨 02:00-04:00 进行系统维护，期间可能无法充电。', time: '2026-10-22 14:00', read: true }
+  ];
+
+  // 服务协议 / 隐私政策（模拟内容）
+  const AGREEMENTS = {
+    service: {
+      title: '绿能充电服务协议',
+      paras: [
+        '欢迎使用绿能充电平台。本协议是您与绿能充电平台之间就使用充电服务所订立的协议，请您在使用前仔细阅读。',
+        '一、服务内容：平台为用户提供两轮电动车充电桩的查找、扫码充电、余额充值、充电记录查询等服务。',
+        '二、计费规则：充电服务按实际充电时长计费，充电结束后从用户钱包余额中扣除相应费用，使用充电券可抵扣部分费用。',
+        '三、用户义务：用户应保证账户余额充足，妥善保管账号信息，不得将账号转让或出借给他人使用。',
+        '四、免责条款：因不可抗力、电网故障、设备检修等非平台原因导致的服务中断，平台将尽力协调但不承担相应责任。',
+        '五、协议变更：平台有权根据业务发展需要修改本协议，修改后的协议将在平台公示，公示后即生效。'
+      ]
+    },
+    privacy: {
+      title: '隐私政策',
+      paras: [
+        '我们高度重视您的个人信息与隐私保护。本政策说明我们如何收集、使用、存储和保护您的信息。',
+        '一、信息收集：我们仅收集为您提供充电服务所必需的信息，包括手机号、充电记录、钱包余额、支付信息等。',
+        '二、信息使用：您的信息仅用于身份识别、订单结算、服务优化、安全风控等目的，不会用于与服务无关的用途。',
+        '三、信息保护：我们采用加密传输、访问控制等技术手段保护您的信息安全，未经您的授权不会向第三方披露。',
+        '四、您的权利：您有权查询、更正、删除您的个人信息，也可以随时注销账户。',
+        '五、联系我们：如对本政策有任何疑问或建议，可通过「帮助与客服」渠道与我们联系。'
+      ]
+    }
+  };
+  let currentAgreementTab = 'service';
 
   function renderStations() {
     const list = document.getElementById('stationList');
@@ -1626,7 +2640,7 @@
     const count = document.getElementById('mapListCount');
     count.textContent = STATIONS.length + ' 个站点';
     box.innerHTML = STATIONS.map(s => `
-      <div class="map-item" onclick="toast('${s.name}')">
+      <div class="map-item" onclick="openStation(${s.id})">
         <div>
           <div class="map-item__name">${s.name}</div>
           <div class="map-item__meta">${s.distance} · ${s.addr}</div>
@@ -1647,6 +2661,7 @@
   let WALLET_BALANCE = 68.50;  // 钱包余额
 
   function openStation(id) {
+    if (!requireLogin(function() { openStation(id); })) return;
     openSocketModal(id);
   }
 
@@ -1694,6 +2709,8 @@
     document.getElementById('detailBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
     renderPriceTable();
     resetMode();
+    autoSelectCoupon();
+    renderCouponEntry();
     document.getElementById('detailOverlay').classList.add('show');
   }
 
@@ -1754,20 +2771,659 @@
 
   function updateStartBtn() {
     const btn = document.getElementById('startBtn');
-    const fee = calcFee();
+    const fee = applyCoupon(calcFee(), currentCouponId);
     btn.innerHTML = (currentMode === null) ? '开始充电' : `开始充电 · ¥${fee.toFixed(2)}`;
   }
 
+  // ===== 充电进行中 / 订单 =====
+  let session = null;
+
   function startCharge() {
     if (currentMode === null) { toast('请先选择充电方式'); return; }
-    const fee = calcFee();
-    if (fee > WALLET_BALANCE) { toast('余额不足，请先充值'); return; }
+    if (session && !session.finished) { toast('已有充电进行中，请先结束上一单'); return; }
+
+    // 充电前校验余额是否充足（边充边计费，充电结束后才扣费）
+    const estimate = applyCoupon(calcFee(), currentCouponId);
+    if (WALLET_BALANCE < estimate) {
+      toast('余额不足，请先充值后再充电');
+      goRecharge();
+      return;
+    }
+
+    // 生成一条「充电中」记录（费用充电结束后结算）
+    const record = {
+      id: nextRecordId++,
+      station: currentStation.name,
+      socket: currentSocketNum,
+      mode: modeLabel(currentMode),
+      duration: '进行中',
+      fee: 0,
+      time: nowStr(),
+      endTime: '',
+      power: currentStation.power,
+      status: '充电中'
+    };
+    CHARGE_RECORDS.unshift(record);
+
+    session = {
+      recordId: record.id,
+      hoursTarget: currentMode === 'full' ? null : (currentMode === 'more' ? customHour : currentMode),
+      priceMin: currentStation.priceMin,
+      couponId: currentCouponId,
+      startTs: Date.now(),
+      timer: null,
+      finished: false
+    };
+
+    document.getElementById('chgStationName').textContent = currentStation.name;
+    document.getElementById('chgSocket').textContent = '插座 ' + currentSocketNum + ' 号 · ' + currentStation.power + 'W';
+    document.getElementById('chgSelect').textContent = chargeSelectionLabel();
+
+    updateCharging();
+
+    document.getElementById('detailOverlay').classList.remove('show');
+    document.getElementById('chargingOverlay').classList.add('show');
+    session.timer = setInterval(updateCharging, 1000);
+  }
+
+  function updateCharging() {
+    if (!session || session.finished) return;
+    const elapsedSec = Math.floor((Date.now() - session.startTs) / 1000);
+    const minutes = elapsedSec === 0 ? 0 : Math.max(1, Math.ceil(elapsedSec / 60));
+    const fee = session.priceMin * minutes;
+
+    document.getElementById('chgElapsed').textContent = formatClock(elapsedSec);
+    document.getElementById('chgDuration').textContent = formatClock(elapsedSec);
+    document.getElementById('chgFee').textContent = '¥' + fee.toFixed(2);
+
+    if (session.hoursTarget !== null) {
+      const remain = session.hoursTarget * 3600 - elapsedSec;
+      if (remain <= 0) { endCharge(); }
+    }
+  }
+
+  function formatClock(sec) {
+    sec = Math.max(0, sec);
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    const mm = String(m).padStart(2, '0');
+    const ss = String(s).padStart(2, '0');
+    return h > 0 ? h + ':' + mm + ':' + ss : mm + ':' + ss;
+  }
+
+  function endCharge() {
+    if (!session || session.finished) return;
+    clearInterval(session.timer);
+    session.finished = true;
+
+    const elapsedSec = Math.floor((Date.now() - session.startTs) / 1000);
+    const minutes = Math.max(1, Math.ceil(elapsedSec / 60));
+    const rawFee = session.priceMin * minutes;
+    const coupon = COUPON_WALLET.find(c => c.id === session.couponId);
+    const discount = coupon ? Math.min(rawFee, coupon.amount) : 0;
+    const fee = Math.max(0, rawFee - discount);
+
+    // 更新记录：状态已完成 + 实际费用，并从余额扣除
+    const rec = CHARGE_RECORDS.find(r => r.id === session.recordId);
+    if (rec) {
+      rec.status = '已完成';
+      rec.duration = durationLabel(minutes);
+      rec.fee = fee;
+      rec.endTime = nowStr();
+    }
     WALLET_BALANCE -= fee;
+    refreshBalances();
+    renderRecords();
+    dailyChargedMinutes += minutes;
+
+    // 使用后核销充电券
+    if (coupon) {
+      const idx = COUPON_WALLET.indexOf(coupon);
+      if (idx >= 0) COUPON_WALLET.splice(idx, 1);
+    }
+
+    document.getElementById('chargingOverlay').classList.remove('show');
+    session = null;
+    toast(discount > 0 ? `充电已完成，充电券抵扣 ¥${discount.toFixed(2)}，实付 ¥${fee.toFixed(2)}` : `充电已完成，已扣除 ¥${fee.toFixed(2)}`);
+  }
+
+  function hideCharging() {
+    document.getElementById('chargingOverlay').classList.remove('show');
+  }
+
+  function openCharging(id) {
+    if (!session || session.recordId !== id) { toast('该订单已结束'); return; }
+    updateCharging();
+    document.getElementById('chargingOverlay').classList.add('show');
+  }
+
+  function openRecordDetail(id) {
+    const r = CHARGE_RECORDS.find(x => x.id === id);
+    if (!r) return;
+    const done = r.status === '已完成';
+    document.getElementById('rdStatusTitle').textContent = r.status;
+    document.getElementById('rdStatusSub').textContent = done ? '充电订单已完成结算' : '充电进行中';
+    const icon = document.getElementById('rdStatusIcon');
+    icon.className = 'rd-status-icon ' + (done ? 'done' : 'doing');
+    icon.innerHTML = done
+      ? '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    document.getElementById('rdStation').textContent = r.station;
+    document.getElementById('rdSocket').textContent = '插座 ' + r.socket + ' 号';
+    document.getElementById('rdPower').textContent = r.power + 'W';
+    document.getElementById('rdMode').textContent = r.mode;
+    document.getElementById('rdDuration').textContent = r.duration;
+    document.getElementById('rdOrderNo').textContent = orderNoOf(r);
+    document.getElementById('rdStart').textContent = r.time;
+    document.getElementById('rdEnd').textContent = r.endTime || '—';
+    document.getElementById('rdFee').textContent = '-¥' + r.fee.toFixed(2);
+    document.getElementById('recordDetailOverlay').classList.add('show');
+  }
+
+  function hideRecordDetail() {
+    document.getElementById('recordDetailOverlay').classList.remove('show');
+  }
+
+  function exitRecordDetail() {
+    document.getElementById('recordDetailOverlay').classList.remove('show');
+    document.getElementById('recordOverlay').classList.remove('show');
+  }
+
+  function orderNoOf(r) {
+    return 'CD' + (r.time || '').replace(/\D/g, '') + String(r.id).padStart(4, '0');
+  }
+
+  function modeLabel(mode) {
+    if (mode === 'full') return '充满计费';
+    if (mode === 'more') return customHour + '小时';
+    return mode + '小时';
+  }
+
+  function durationLabel(minutes) {
+    if (minutes < 1) return '不足1分钟';
+    if (minutes < 60) return minutes + '分钟';
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m ? h + '小时' + m + '分' : h + '小时';
+  }
+
+  function nowStr() {
+    const d = new Date();
+    const p = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  function chargeSelectionLabel() {
+    if (!session) return '—';
+    return session.hoursTarget === null ? '充满计费' : session.hoursTarget.toFixed(2) + '小时';
+  }
+
+  function refreshBalances() {
     document.getElementById('detailBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
-    toast(`充电已开始，扣费 ¥${fee.toFixed(2)}`);
+    document.getElementById('rechargeBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
+    document.getElementById('mineBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
+  }
+
+  // ===== 登录授权 =====
+  let USER = null;
+  let pendingAction = null;
+
+  function showLogin() {
+    document.getElementById('loginOverlay').classList.remove('hide');
+  }
+
+  function doLogin() {
+    const textEl = document.getElementById('loginBtnText');
+    const btn = document.getElementById('loginBtn');
+    btn.classList.add('loading');
+    textEl.textContent = '登录中…';
+    setTimeout(() => {
+      USER = { nickname: '微信用户', phone: '138****8888' };
+      renderUser();
+      document.getElementById('loginOverlay').classList.add('hide');
+      btn.classList.remove('loading');
+      textEl.textContent = '微信一键登录';
+      const action = pendingAction;
+      pendingAction = null;
+      toast('登录成功，欢迎使用绿能充电');
+      if (action) action();
+    }, 800);
+  }
+
+  function skipLogin() {
+    pendingAction = null;
+    document.getElementById('loginOverlay').classList.add('hide');
+    toast('已进入游客模式');
+  }
+
+  function maybeLogin() {
+    if (!USER) showLogin();
+  }
+
+  function requireLogin(action) {
+    if (!USER) {
+      pendingAction = action;
+      showLogin();
+      return false;
+    }
+    return true;
+  }
+
+  function renderUser() {
+    const nicknameEl = document.getElementById('nickname');
+    const phoneEl = document.getElementById('userPhone');
+    const logoutItem = document.getElementById('logoutItem');
+    if (USER) {
+      nicknameEl.textContent = USER.nickname;
+      nicknameEl.classList.remove('as-login');
+      phoneEl.textContent = USER.phone;
+      logoutItem.style.display = '';
+    } else {
+      nicknameEl.textContent = '登录';
+      nicknameEl.classList.add('as-login');
+      phoneEl.textContent = '登录后开启充电之旅';
+      logoutItem.style.display = 'none';
+    }
+  }
+
+  // ===== 系统消息 =====
+  function updateNotifyBadge() {
+    const unread = MESSAGES.filter(m => !m.read).length;
+    const badge = document.getElementById('notifyBadge');
+    badge.textContent = unread;
+    badge.style.display = unread ? 'flex' : 'none';
+  }
+
+  function openMessages() {
+    if (!requireLogin(openMessages)) return;
+    renderMessages();
+    document.getElementById('messagesOverlay').classList.add('show');
+  }
+
+  function hideMessages() {
+    document.getElementById('messagesOverlay').classList.remove('show');
+  }
+
+  function renderMessages() {
+    document.getElementById('messagesBody').innerHTML = MESSAGES.map(m => `
+      <div class="msg-item ${m.read ? '' : 'unread'}" onclick="readMessage(${m.id})">
+        <div class="msg-head">
+          ${m.read ? '' : '<span class="msg-dot"></span>'}
+          <span class="msg-title">${m.title}</span>
+          <span class="msg-time">${m.time}</span>
+        </div>
+        <div class="msg-content">${m.content}</div>
+      </div>
+    `).join('');
+    updateNotifyBadge();
+  }
+
+  function readMessage(id) {
+    const m = MESSAGES.find(x => x.id === id);
+    if (m && !m.read) {
+      m.read = true;
+      renderMessages();
+    }
+  }
+
+  // ===== 模拟扫码 =====
+  function simulateScan() {
+    const station = STATIONS[Math.floor(Math.random() * STATIONS.length)];
+    currentStation = station;
+    const occupied = station.occupied || [];
+    currentSocketNum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].find(i => !occupied.includes(i)) || 1;
+    hideScan();
+    openDetail();
+    toast('模拟扫码成功：' + station.name);
+  }
+
+  // ===== 开屏广告 =====
+  let splashTimer = null;
+  let splashCount = 5;
+
+  function startSplash() {
+    document.getElementById('splashAd').classList.remove('hide');
+    splashCount = 5;
+    document.getElementById('splashSkip').textContent = '跳过 5s';
+    clearInterval(splashTimer);
+    splashTimer = setInterval(() => {
+      splashCount--;
+      if (splashCount <= 0) {
+        clearInterval(splashTimer);
+        skipSplash();
+      } else {
+        document.getElementById('splashSkip').textContent = '跳过 ' + splashCount + 's';
+      }
+    }, 1000);
+  }
+
+  function skipSplash() {
+    clearInterval(splashTimer);
+    document.getElementById('splashAd').classList.add('hide');
+  }
+
+  // ===== 信息流广告（充电列表插播）已移除 =====
+
+  // ===== 充电券 =====
+  function getAvailableCoupons() {
+    return COUPON_WALLET.filter(c => c.expire >= TODAY).sort((a, b) => b.amount - a.amount);
+  }
+
+  function applyCoupon(amount, couponId) {
+    const c = COUPON_WALLET.find(x => x.id === couponId);
+    if (!c) return amount;
+    return Math.max(0, amount - c.amount);
+  }
+
+  function autoSelectCoupon() {
+    const avail = getAvailableCoupons();
+    currentCouponId = avail.length ? avail[0].id : null;
+  }
+
+  function renderCouponEntry() {
+    const label = document.getElementById('couponEntryLabel');
+    const c = COUPON_WALLET.find(x => x.id === currentCouponId);
+    label.textContent = c ? ('已选 ' + c.amount + '元充电券（减¥' + c.amount + '）') : '不使用优惠券';
+  }
+
+  function openCouponPicker() {
+    renderCouponPicker();
+    document.getElementById('couponSheet').classList.add('show');
+  }
+
+  function closeCouponPicker() {
+    document.getElementById('couponSheet').classList.remove('show');
+  }
+
+  function renderCouponPicker() {
+    const box = document.getElementById('couponPickerList');
+    const avail = getAvailableCoupons();
+    let html = `<div class="picker-item ${currentCouponId === null ? 'active' : ''}" onclick="selectCouponFromPicker(null, this)"><div class="picker-item__label">不使用优惠券</div><div class="picker-item__check">✓</div></div>`;
+    html += avail.map(c => `
+      <div class="picker-item ${currentCouponId === c.id ? 'active' : ''}" onclick="selectCouponFromPicker(${c.id}, this)">
+        <div class="picker-item__left">
+          <div class="picker-item__amount">¥${c.amount}</div>
+          <div class="picker-item__meta">${c.amount}元充电券 · 有效期至 ${c.expire}</div>
+        </div>
+        <div class="picker-item__check">✓</div>
+      </div>
+    `).join('');
+    if (!avail.length) html += '<div class="picker-empty">暂无可用充电券，可前往积分中心兑换</div>';
+    box.innerHTML = html;
+  }
+
+  function selectCouponFromPicker(id, el) {
+    currentCouponId = id;
+    document.querySelectorAll('#couponPickerList .picker-item').forEach(x => x.classList.remove('active'));
+    if (el) el.classList.add('active');
+    renderCouponEntry();
+    updateStartBtn();
+    closeCouponPicker();
+  }
+
+  // ===== 积分中心 =====
+  function updatePointsDisplay() {
+    document.getElementById('minePoints').textContent = POINTS;
+    const pb = document.getElementById('pointsBalance');
+    if (pb) pb.textContent = POINTS;
+  }
+
+  function openPointsCenter() {
+    if (!requireLogin(openPointsCenter)) return;
+    renderPointsCenter();
+    document.getElementById('pointsOverlay').classList.add('show');
+  }
+
+  function hidePointsCenter() {
+    document.getElementById('pointsOverlay').classList.remove('show');
+  }
+
+  function renderPointsCenter() {
+    document.getElementById('pointsBalance').textContent = POINTS;
+    const btn = document.getElementById('checkinBtn');
+    if (checkedIn) {
+      btn.textContent = '今日已签到';
+      btn.classList.add('done');
+      btn.disabled = true;
+    } else {
+      btn.textContent = '签到 +' + CHECKIN_REWARD;
+      btn.classList.remove('done');
+      btn.disabled = false;
+    }
+    document.getElementById('exchangeList').innerHTML = EXCHANGE_ITEMS.map(e => `
+      <div class="exchange-item">
+        <div class="ex-ico">${e.amount}元</div>
+        <div class="ex-info">
+          <div class="ex-name">${e.amount}元充电券</div>
+          <div class="ex-points">${e.points} 积分</div>
+        </div>
+        <button class="ex-btn" onclick="exchangeCoupon(${e.amount})">兑换</button>
+      </div>
+    `).join('');
+    renderDailyTasks();
+  }
+
+  // ===== 每日任务 =====
+  function taskProgress(t) {
+    if (t.type === 'charge') return Math.min(dailyChargedMinutes, t.target);
+    return t.progress;
+  }
+
+  function renderDailyTasks() {
+    const box = document.getElementById('dailyTaskList');
+    box.innerHTML = dailyTasks.map(t => {
+      const progress = taskProgress(t);
+      const done = progress >= t.target;
+      const pct = Math.min(100, Math.round(progress / t.target * 100));
+      let btn;
+      if (t.claimed) {
+        btn = '<button class="task-btn claimed">已领取</button>';
+      } else if (done) {
+        btn = '<button class="task-btn claim" onclick="claimTask(' + t.id + ')">领取</button>';
+      } else if (t.type === 'video') {
+        btn = '<button class="task-btn do" onclick="watchTaskAd(' + t.id + ')">去观看</button>';
+      } else {
+        btn = '<button class="task-btn do" onclick="goChargeTask()">去充电</button>';
+      }
+      return `
+        <div class="task-item">
+          <div class="task-ico ${t.type}">${t.type === 'charge' ? '充' : '看'}</div>
+          <div class="task-info">
+            <div class="task-title">${t.title}</div>
+            <div class="task-progress">
+              <div class="task-bar"><i style="width:${pct}%"></i></div>
+              <span class="task-num">${progress}/${t.target} ${t.unit}</span>
+            </div>
+          </div>
+          <div class="task-right">
+            <div class="task-reward">+${t.reward}积分</div>
+            ${btn}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function watchTaskAd(id) {
+    const t = dailyTasks.find(x => x.id === id);
+    if (!t || t.type !== 'video') return;
+    toast('广告播放中，请稍候…');
+    setTimeout(() => {
+      t.progress = Math.min(t.target, t.progress + 1);
+      renderDailyTasks();
+      toast('观看完成');
+    }, 1500);
+  }
+
+  function claimTask(id) {
+    const t = dailyTasks.find(x => x.id === id);
+    if (!t) return;
+    if (taskProgress(t) < t.target) { toast('任务尚未完成'); return; }
+    if (t.claimed) { toast('已领取过该任务奖励'); return; }
+    t.claimed = true;
+    POINTS += t.reward;
+    POINTS_LOG.unshift({ time: nowStr(), desc: t.title + '奖励', points: t.reward });
+    updatePointsDisplay();
+    renderPointsCenter();
+    toast('领取成功，+ ' + t.reward + ' 积分');
+  }
+
+  function goChargeTask() {
+    hidePointsCenter();
+    switchTab('home', document.querySelector('.tab'));
+  }
+
+  function doCheckin() {
+    if (checkedIn) { toast('今日已签到'); return; }
+    checkedIn = true;
+    POINTS += CHECKIN_REWARD;
+    POINTS_LOG.unshift({ time: nowStr(), desc: '每日签到', points: CHECKIN_REWARD });
+    updatePointsDisplay();
+    renderPointsCenter();
+    toast('签到成功，+ ' + CHECKIN_REWARD + ' 积分');
+  }
+
+  function exchangeCoupon(amount) {
+    const item = EXCHANGE_ITEMS.find(e => e.amount === amount);
+    if (!item) return;
+    if (POINTS < item.points) { toast('积分不足，无法兑换'); return; }
+    POINTS -= item.points;
+    COUPON_WALLET.push({ id: nextCouponId++, amount: amount, expire: addDays(TODAY, 90) });
+    POINTS_LOG.unshift({ time: nowStr(), desc: '兑换 ' + amount + '元充电券', points: -item.points });
+    updatePointsDisplay();
+    renderPointsCenter();
+    toast('兑换成功，已获得 ' + amount + '元充电券');
+  }
+
+  function addDays(dateStr, days) {
+    const d = new Date(dateStr + 'T00:00:00');
+    d.setDate(d.getDate() + days);
+    const p = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+
+  function openPointsDetail() {
+    renderPointsDetail();
+    document.getElementById('pointsDetailOverlay').classList.add('show');
+  }
+
+  function hidePointsDetail() {
+    document.getElementById('pointsDetailOverlay').classList.remove('show');
+  }
+
+  function renderPointsDetail() {
+    document.getElementById('pointsDetailBody').innerHTML = POINTS_LOG.map(l => `
+      <div class="points-log-item">
+        <div>
+          <div class="pl-desc">${l.desc}</div>
+          <div class="pl-time">${l.time}</div>
+        </div>
+        <div class="pl-points ${l.points >= 0 ? 'plus' : 'minus'}">${l.points >= 0 ? '+' : ''}${l.points}</div>
+      </div>
+    `).join('');
+  }
+
+  // ===== 充电券列表 =====
+  let currentCouponTab = 'available';
+
+  function openCouponPage() {
+    if (!requireLogin(openCouponPage)) return;
+    currentCouponTab = getAvailableCoupons().length ? 'available' : 'expired';
+    syncCouponTabs();
+    renderCouponPage();
+    document.getElementById('couponPageOverlay').classList.add('show');
+  }
+
+  function hideCouponPage() {
+    document.getElementById('couponPageOverlay').classList.remove('show');
+  }
+
+  function switchCouponTab(key, el) {
+    currentCouponTab = key;
+    syncCouponTabs();
+    renderCouponPage();
+  }
+
+  function syncCouponTabs() {
+    document.querySelectorAll('#couponPageOverlay .record-tab').forEach(t => t.classList.remove('active'));
+    const active = currentCouponTab === 'available' ? document.getElementById('tabAvailable') : document.getElementById('tabExpired');
+    active.classList.add('active');
+  }
+
+  function renderCouponPage() {
+    const avail = getAvailableCoupons();
+    const expired = COUPON_WALLET.filter(c => c.expire < TODAY);
+    document.getElementById('availableBadge').textContent = avail.length;
+    document.getElementById('expiredBadge').textContent = expired.length;
+    const list = currentCouponTab === 'available' ? avail : expired;
+    const box = document.getElementById('couponPageBody');
+    if (!list.length) {
+      const icon = currentCouponTab === 'available'
+        ? '<svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2.5 2.5 0 0 0 0 5v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1a2.5 2.5 0 0 0 0-5V8Z" stroke="#AEB9B3" stroke-width="1.6"/></svg>'
+        : '<svg width="44" height="44" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#AEB9B3" stroke-width="1.6"/><path d="M12 7v5l3 3" stroke="#AEB9B3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      box.innerHTML = '<div class="record-empty">' + icon + '<div>' + (currentCouponTab === 'available' ? '暂无可用充电券' : '暂无过期充电券') + '</div></div>';
+      return;
+    }
+    box.innerHTML = list.map(c => {
+      const expiredCard = c.expire < TODAY;
+      return `
+        <div class="coupon-card ${expiredCard ? 'expired' : ''}">
+          <div class="cc-left">
+            <div class="cc-amount">¥${c.amount}</div>
+            <div class="cc-name">${c.amount}元充电券</div>
+          </div>
+          <div class="cc-right">
+            <div class="cc-expire">有效期至 ${c.expire}</div>
+            <div class="cc-tag">${expiredCard ? '已过期' : '待使用'}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ===== 服务协议 =====
+  function openAgreement() {
+    renderAgreement();
+    document.getElementById('agreementOverlay').classList.add('show');
+  }
+
+  function hideAgreement() {
+    document.getElementById('agreementOverlay').classList.remove('show');
+  }
+
+  function switchAgreementTab(key, el) {
+    currentAgreementTab = key;
+    document.querySelectorAll('.agreement-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderAgreement();
+  }
+
+  function renderAgreement() {
+    const a = AGREEMENTS[currentAgreementTab];
+    document.getElementById('agreementBody').innerHTML =
+      '<div class="agreement-title">' + a.title + '</div>' +
+      a.paras.map(p => '<p class="agreement-para">' + p + '</p>').join('');
+  }
+
+  // ===== 退出登录 =====
+  function openLogoutConfirm() {
+    document.getElementById('logoutModal').classList.add('show');
+  }
+
+  function closeLogoutConfirm() {
+    document.getElementById('logoutModal').classList.remove('show');
+  }
+
+  function confirmLogout() {
+    closeLogoutConfirm();
+    USER = null;
+    renderUser();
+    toast('已退出登录');
   }
 
   function scan() {
+    if (!requireLogin(scan)) return;
     document.getElementById('scanOverlay').classList.add('show');
   }
 
@@ -1778,6 +3434,7 @@
   let rechargeAmount = null;
 
   function goRecharge() {
+    if (!requireLogin(goRecharge)) return;
     rechargeAmount = null;
     document.getElementById('rechargeBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
     document.getElementById('rechargeInput').value = '';
@@ -1834,18 +3491,33 @@
     if (inputVal) amount = parseFloat(inputVal);
     if (!amount || amount < 10) { toast('充值金额最低 10 元'); return; }
     WALLET_BALANCE += amount;
-    document.getElementById('rechargeBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
-    document.getElementById('detailBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
-    document.getElementById('mineBalance').textContent = '¥' + WALLET_BALANCE.toFixed(2);
+    refreshBalances();
     rechargeAmount = null;
     document.getElementById('rechargeInput').value = '';
     renderRechargeOptions();
     updateRechargeBtn();
     toast(`充值成功 ¥${amount.toFixed(2)}`);
   }
+  let currentRecordTab = 'doing';
+
   function goRecord() {
+    if (!requireLogin(goRecord)) return;
+    currentRecordTab = CHARGE_RECORDS.some(r => r.status === '充电中') ? 'doing' : 'history';
+    syncRecordTabs();
     renderRecords();
     document.getElementById('recordOverlay').classList.add('show');
+  }
+
+  function switchRecordTab(key, el) {
+    currentRecordTab = key;
+    syncRecordTabs();
+    renderRecords();
+  }
+
+  function syncRecordTabs() {
+    document.querySelectorAll('#recordOverlay .record-tab').forEach(t => t.classList.remove('active'));
+    const active = currentRecordTab === 'doing' ? document.getElementById('tabDoing') : document.getElementById('tabHistory');
+    active.classList.add('active');
   }
 
   function hideRecord() {
@@ -1854,10 +3526,19 @@
 
   function renderRecords() {
     const box = document.getElementById('recordBody');
-    box.innerHTML = `
-      <div class="record-summary">共 ${CHARGE_RECORDS.length} 条充电记录</div>
-      ${CHARGE_RECORDS.map(r => `
-        <div class="record-item">
+    const list = CHARGE_RECORDS.filter(r => currentRecordTab === 'doing' ? r.status === '充电中' : r.status === '已完成');
+    document.getElementById('doingBadge').textContent = CHARGE_RECORDS.filter(r => r.status === '充电中').length;
+    document.getElementById('historyBadge').textContent = CHARGE_RECORDS.filter(r => r.status === '已完成').length;
+
+    if (!list.length) {
+      box.innerHTML = emptyStateHtml(currentRecordTab);
+      return;
+    }
+
+    const items = list.map(r => {
+      const handler = r.status === '充电中' ? 'openCharging(' + r.id + ')' : 'openRecordDetail(' + r.id + ')';
+      return `
+        <div class="record-item" onclick="${handler}">
           <div class="record-item__top">
             <div class="record-item__name">${r.station}</div>
             <div class="record-item__status ${r.status === '已完成' ? 'done' : 'doing'}">${r.status}</div>
@@ -1865,17 +3546,27 @@
           <div class="record-item__meta">
             <span class="m-item">插座 ${r.socket} 号</span>
             <span class="m-item">${r.mode}</span>
-            <span class="m-item">${r.duration}</span>
+            <span class="m-item">${r.status === '充电中' ? '进行中' : r.duration}</span>
           </div>
           <div class="record-item__foot">
             <span class="record-item__time">${r.time}</span>
-            <span class="record-item__fee">-¥${r.fee.toFixed(2)}</span>
+            <span class="record-item__fee${r.status === '充电中' ? ' calc' : ''}">${r.status === '充电中' ? '计费中' : '-¥' + r.fee.toFixed(2)}</span>
           </div>
         </div>
-      `).join('')}
-    `;
+      `;
+    }).join('');
+    box.innerHTML = items;
+  }
+
+  function emptyStateHtml(type) {
+    const icon = type === 'doing'
+      ? '<svg width="44" height="44" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#AEB9B3" stroke-width="1.6"/><path d="M12 7v5l3 3" stroke="#AEB9B3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '<svg width="44" height="44" viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="16" rx="2" stroke="#AEB9B3" stroke-width="1.6"/><path d="M9 9h6M9 13h6" stroke="#AEB9B3" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    const text = type === 'doing' ? '暂无进行中的充电' : '暂无历史充电记录';
+    return '<div class="record-empty">' + icon + '<div>' + text + '</div></div>';
   }
   function goFrequent() {
+    if (!requireLogin(goFrequent)) return;
     renderFrequentStations();
     document.getElementById('frequentOverlay').classList.add('show');
   }
@@ -1957,6 +3648,10 @@
   // 初始化
   renderStations();
   renderMapList();
+  renderUser();
+  updatePointsDisplay();
+  updateNotifyBadge();
+  startSplash();
 </script>
 </body>
 </html>
