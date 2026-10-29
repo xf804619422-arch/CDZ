@@ -87,18 +87,26 @@
 
   .main { padding: 8px 20px calc(var(--tabbar-h) + 20px); }
 
-  /* 海报（纯图片） */
+  /* 海报（广告位） */
   .poster {
+    position: relative;
     border-radius: var(--radius-lg);
     overflow: hidden;
     margin-bottom: 20px;
     box-shadow: var(--shadow-md);
     background: var(--green-100);
+    cursor: pointer;
   }
   .poster svg {
     display: block;
     width: 100%;
     height: auto;
+  }
+  .poster-ad-tag {
+    position: absolute; top: 12px; left: 12px; z-index: 2;
+    font-size: 11px; font-weight: 600; color: #fff;
+    background: rgba(15, 32, 26, .45);
+    padding: 3px 8px; border-radius: 4px;
   }
 
   /* 快捷入口 */
@@ -536,7 +544,7 @@
 
   .charge-modes {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
   .mode {
@@ -555,29 +563,6 @@
     background: var(--green-50);
     color: var(--green-600);
   }
-  .mode.more { color: var(--blue-500); border-color: #D8E6FF; background: #F4F8FF; }
-  .mode.more.active { border-color: var(--blue-500); background: var(--blue-100); color: var(--blue-500); }
-
-  .custom-hours {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-  }
-  .hour {
-    display: flex; align-items: center; justify-content: center;
-    padding: 10px 4px;
-    border-radius: 10px;
-    border: 1.5px solid var(--line);
-    background: #fff;
-    font-size: 13px; font-weight: 700; color: var(--ink-600);
-    cursor: pointer;
-  }
-  .hour.active {
-    border-color: var(--green-500);
-    background: var(--green-50);
-    color: var(--green-600);
-  }
-
   .price-table {
     width: 100%;
     border-collapse: collapse;
@@ -593,10 +578,14 @@
     font-weight: 700; color: var(--ink-600);
   }
   .price-table td { color: var(--ink-900); font-weight: 600; }
-  .price-note {
-    margin-top: 12px;
-    font-size: 12px; color: var(--ink-400);
-    line-height: 1.6;
+  .section-title-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title-row .section-title { margin-bottom: 0; }
+  .price-help-btn {
+    flex: none; font-size: 13px; font-weight: 700; color: var(--blue-500);
+    cursor: pointer; padding: 2px 4px;
   }
 
   .detail-footer {
@@ -1490,7 +1479,7 @@
   /* 原生广告（信息流） */
   .ad-native {
     background: #fff; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
-    padding: 14px 16px; margin-bottom: 12px; cursor: pointer;
+    padding: 10px 14px; margin-bottom: 12px; cursor: pointer;
   }
   .ad-native__head { display: flex; align-items: center; gap: 8px; }
   .ad-native__avatar {
@@ -1501,7 +1490,7 @@
   .ad-native__name { font-size: 13px; font-weight: 700; color: var(--ink-600); flex: 1; }
   .ad-native__title { font-size: 15px; font-weight: 700; color: var(--ink-900); margin-top: 10px; }
   .ad-native__img {
-    margin-top: 10px; height: 90px; border-radius: 10px;
+    margin-top: 8px; height: 48px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 13px; font-weight: 700;
   }
@@ -1536,6 +1525,21 @@
   .task-btn.claim { background: #fff; border: 1.5px solid var(--orange); color: var(--orange); }
   .task-btn.claimed { background: #F2F4F3; color: var(--ink-300); cursor: default; }
 
+  /* ===== 计费说明弹窗 ===== */
+  .price-help-modal { position: absolute; inset: 0; z-index: 67; display: none; }
+  .price-help-modal.show { display: block; }
+  .price-help-mask { position: absolute; inset: 0; background: rgba(15,32,26,.45); }
+  .price-help-dialog {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 320px; background: #fff; border-radius: 16px; padding: 18px 16px;
+  }
+  .price-help-head {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 16px; font-weight:800; color: var(--ink-900); margin-bottom: 12px;
+  }
+  .price-help-close { font-size: 22px; color: var(--ink-400); cursor: pointer; line-height: 1; }
+  .price-help-note { font-size: 12px; color: var(--ink-400); line-height: 1.6; margin-top: 12px; }
+
   @media (max-width: 480px) {
     body { padding: 0; }
     .phone { width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; box-shadow: none; }
@@ -1559,9 +1563,10 @@
       <!-- 首页 -->
       <section id="page-home">
         <div class="main">
-          <!-- 海报（图片 + 文案） -->
-          <div class="poster">
-            <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" role="img" aria-label="绿色充电宣传">
+          <!-- 广告位 -->
+          <div class="poster" onclick="toast('广告落地页（下一步设计）')">
+            <span class="poster-ad-tag">广告</span>
+            <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" role="img" aria-label="雅迪电动车广告">
               <defs>
                 <linearGradient id="ps-sky2" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0" stop-color="#E5F3EF"/>
@@ -1663,8 +1668,8 @@
               <path d="M470 196 l-6 3 6 3 -6 3" fill="none" stroke="#E8C860" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 
               <!-- 文案 -->
-              <text x="34" y="84" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="42" font-weight="800" fill="#24473A">满电出发</text>
-              <text x="36" y="120" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" font-weight="600" fill="#2E8A70">绿色能源 · 充电无忧</text>
+              <text x="34" y="84" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="42" font-weight="800" fill="#24473A">雅迪电动车</text>
+              <text x="36" y="120" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" font-weight="600" fill="#2E8A70">以旧换新 · 最高抵 800 元</text>
             </svg>
           </div>
 
@@ -1964,43 +1969,6 @@
       </div>
 
       <div class="detail-body">
-        <!-- 站点与插座信息 -->
-        <div class="detail-station">
-          <div class="ds-name" id="dsName">站点名称</div>
-          <div class="ds-addr" id="dsAddr">站点地址</div>
-          <div class="ds-socket">
-            <span class="badge socket-badge" id="dsSocket">插座 1 号</span>
-            <span class="badge power-badge" id="dsPower">额定功率 500W</span>
-          </div>
-        </div>
-
-        <!-- 充电方式 -->
-        <div class="detail-section">
-          <div class="section-title">选择充电方式</div>
-          <div class="charge-modes" id="chargeModes">
-            <div class="mode" data-mode="full" onclick="selectMode('full', this)">充满<br>计费</div>
-            <div class="mode" data-mode="2" onclick="selectMode(2, this)">2小时</div>
-            <div class="mode" data-mode="4" onclick="selectMode(4, this)">4小时</div>
-            <div class="mode" data-mode="8" onclick="selectMode(8, this)">8小时</div>
-            <div class="mode more" data-mode="more" onclick="selectMode('more', this)">更多<br>选项</div>
-          </div>
-        </div>
-
-        <!-- 使用充电券 -->
-        <div class="detail-section" id="couponSection">
-          <div class="section-title">使用充电券</div>
-          <div class="coupon-entry" onclick="openCouponPicker()">
-            <span class="coupon-entry-label" id="couponEntryLabel">不使用优惠券</span>
-            <span class="coupon-entry-arrow">›</span>
-          </div>
-        </div>
-
-        <!-- 自定义时长 -->
-        <div class="detail-section" id="customSection" hidden>
-          <div class="section-title">自定义时长（1-10 小时）</div>
-          <div class="custom-hours" id="customHours"></div>
-        </div>
-
         <!-- 广告 -->
         <div class="ad-native" onclick="toast('广告落地页（下一步设计）')">
           <div class="ad-native__head">
@@ -2015,15 +1983,50 @@
           <div class="ad-native__cta">立即了解 ›</div>
         </div>
 
+        <!-- 站点与插座信息 -->
+        <div class="detail-station">
+          <div class="ds-name" id="dsName">站点名称</div>
+          <div class="ds-addr" id="dsAddr">站点地址</div>
+          <div class="ds-socket">
+            <span class="badge socket-badge" id="dsSocket">插座 1 号</span>
+            <span class="badge power-badge" id="dsPower">额定功率 500W</span>
+          </div>
+        </div>
+
+        <!-- 充电方式 -->
+        <div class="detail-section">
+          <div class="section-title">选择充电方式</div>
+          <div class="charge-modes" id="chargeModes">
+            <div class="mode" data-mode="full" onclick="selectMode('full', this)">充满<br>自停</div>
+            <div class="mode" data-mode="1" onclick="selectMode(1, this)">1元</div>
+            <div class="mode" data-mode="2" onclick="selectMode(2, this)">2元</div>
+            <div class="mode" data-mode="3" onclick="selectMode(3, this)">3元</div>
+            <div class="mode" data-mode="5" onclick="selectMode(5, this)">5元</div>
+            <div class="mode" data-mode="10" onclick="selectMode(10, this)">10元</div>
+          </div>
+        </div>
+
+        <!-- 使用充电券 -->
+        <div class="detail-section" id="couponSection">
+          <div class="section-title">使用充电券</div>
+          <div class="coupon-entry" onclick="openCouponPicker()">
+            <span class="coupon-entry-label" id="couponEntryLabel">不使用优惠券</span>
+            <span class="coupon-entry-arrow">›</span>
+          </div>
+        </div>
+
         <!-- 计费说明 -->
         <div class="detail-section">
-          <div class="section-title">计费说明</div>
+          <div class="section-title-row">
+            <div class="section-title">计费说明</div>
+            <span class="price-help-btn" onclick="openPriceHelp()">说明</span>
+          </div>
           <table class="price-table">
             <thead>
               <tr>
                 <th>充电器额定功率(瓦)</th>
-                <th>单价(元/分钟)</th>
-                <th>单价(元/小时)</th>
+                <th>电费(元/度)</th>
+                <th>服务费(元/分钟)</th>
               </tr>
             </thead>
             <tbody id="priceTbody">
@@ -2034,7 +2037,6 @@
               </tr>
             </tbody>
           </table>
-          <div class="price-note">说明：充电费用按所选时长 × 单价自动计算，从钱包余额中扣除；充满计费按实际充电时长结算，余额不足时将自动停止充电。</div>
         </div>
       </div>
 
@@ -2480,6 +2482,28 @@
       <div class="messages-body" id="messagesBody"></div>
     </div>
 
+    <!-- 计费说明弹窗 -->
+    <div class="price-help-modal" id="priceHelpModal">
+      <div class="price-help-mask" onclick="closePriceHelp()"></div>
+      <div class="price-help-dialog">
+        <div class="price-help-head">
+          <span>计费说明</span>
+          <span class="price-help-close" onclick="closePriceHelp()">×</span>
+        </div>
+        <table class="price-table">
+          <thead>
+            <tr>
+              <th>充电器额定功率(瓦)</th>
+              <th>电费(元/度)</th>
+              <th>服务费(元/分钟)</th>
+            </tr>
+          </thead>
+          <tbody id="priceHelpTbody"></tbody>
+        </table>
+        <div class="price-help-note">充电费用 = 电费 + 服务费。电费按实际用电量（度）计收，服务费按充电时长（分钟）计收；充满自停按实际发生费用结算，充电结束后从钱包余额扣除。</div>
+      </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
@@ -2524,11 +2548,11 @@
 
   // 计费说明：不同额定功率充电器的计费标准（模拟数据）
   const PRICE_TIERS = [
-    { power: 350,  min: 0.06, hour: 3.6 },
-    { power: 500,  min: 0.08, hour: 4.8 },
-    { power: 800,  min: 0.12, hour: 7.2 },
-    { power: 1000, min: 0.15, hour: 9.0 },
-    { power: 2000, min: 0.30, hour: 18.0 }
+    { power: 350,  service: 0.06, elec: 0.55 },
+    { power: 500,  service: 0.08, elec: 0.58 },
+    { power: 800,  service: 0.12, elec: 0.62 },
+    { power: 1000, service: 0.15, elec: 0.65 },
+    { power: 2000, service: 0.30, elec: 0.70 }
   ];
 
   // 积分与充电券
@@ -2656,8 +2680,7 @@
   // 全局状态
   let currentStation = null;
   let currentSocketNum = 1;
-  let currentMode = null;      // 'full' | 2 | 4 | 8 | 'more'
-  let customHour = 1;          // 1-10 小时
+  let currentMode = null;      // 'full' | 1 | 2 | 3 | 5 | 10
   let WALLET_BALANCE = 68.50;  // 钱包余额
 
   function openStation(id) {
@@ -2719,21 +2742,38 @@
   }
 
   function renderPriceTable() {
-    document.getElementById('priceTbody').innerHTML = PRICE_TIERS.map(t => `
+    const tier = PRICE_TIERS.find(t => t.power === currentStation.power) || PRICE_TIERS[0];
+    document.getElementById('priceTbody').innerHTML = `
+      <tr>
+        <td>${tier.power}</td>
+        <td>${tier.elec.toFixed(2)}</td>
+        <td>${tier.service.toFixed(2)}</td>
+      </tr>
+    `;
+  }
+
+  function openPriceHelp() {
+    renderPriceHelp();
+    document.getElementById('priceHelpModal').classList.add('show');
+  }
+
+  function closePriceHelp() {
+    document.getElementById('priceHelpModal').classList.remove('show');
+  }
+
+  function renderPriceHelp() {
+    document.getElementById('priceHelpTbody').innerHTML = PRICE_TIERS.map(t => `
       <tr>
         <td>${t.power}</td>
-        <td>${t.min.toFixed(2)}</td>
-        <td>${t.hour.toFixed(2)}</td>
+        <td>${t.elec.toFixed(2)}</td>
+        <td>${t.service.toFixed(2)}</td>
       </tr>
     `).join('');
   }
 
   function resetMode() {
     currentMode = null;
-    customHour = 1;
-    document.getElementById('customSection').hidden = true;
     document.querySelectorAll('#chargeModes .mode').forEach(m => m.classList.remove('active'));
-    renderCustomHours();
     updateStartBtn();
   }
 
@@ -2741,32 +2781,13 @@
     currentMode = mode;
     document.querySelectorAll('#chargeModes .mode').forEach(m => m.classList.remove('active'));
     el.classList.add('active');
-    document.getElementById('customSection').hidden = (mode !== 'more');
-    updateStartBtn();
-  }
-
-  function renderCustomHours() {
-    const box = document.getElementById('customHours');
-    let html = '';
-    for (let i = 1; i <= 10; i++) {
-      html += `<div class="hour ${i === customHour ? 'active' : ''}" onclick="selectHour(${i}, this)">${i}小时</div>`;
-    }
-    box.innerHTML = html;
-  }
-
-  function selectHour(h, el) {
-    customHour = h;
-    document.querySelectorAll('#customHours .hour').forEach(x => x.classList.remove('active'));
-    el.classList.add('active');
     updateStartBtn();
   }
 
   function calcFee() {
-    if (!currentStation) return 0;
+    if (!currentStation || currentMode === null) return 0;
     if (currentMode === 'full') return currentStation.priceHour * 6; // 充满预估 6 小时
-    if (currentMode === 'more') return currentStation.priceHour * customHour;
-    if (currentMode === 2 || currentMode === 4 || currentMode === 8) return currentStation.priceHour * currentMode;
-    return 0;
+    return currentMode; // 金额模式：1/2/3/5/10 元
   }
 
   function updateStartBtn() {
@@ -2807,7 +2828,7 @@
 
     session = {
       recordId: record.id,
-      hoursTarget: currentMode === 'full' ? null : (currentMode === 'more' ? customHour : currentMode),
+      amountTarget: currentMode === 'full' ? null : currentMode, // X 元，充满为 null
       priceMin: currentStation.priceMin,
       couponId: currentCouponId,
       startTs: Date.now(),
@@ -2830,16 +2851,14 @@
     if (!session || session.finished) return;
     const elapsedSec = Math.floor((Date.now() - session.startTs) / 1000);
     const minutes = elapsedSec === 0 ? 0 : Math.max(1, Math.ceil(elapsedSec / 60));
-    const fee = session.priceMin * minutes;
+    const rawFee = session.priceMin * minutes;
+    const fee = session.amountTarget !== null ? Math.min(rawFee, session.amountTarget) : rawFee;
 
     document.getElementById('chgElapsed').textContent = formatClock(elapsedSec);
     document.getElementById('chgDuration').textContent = formatClock(elapsedSec);
     document.getElementById('chgFee').textContent = '¥' + fee.toFixed(2);
 
-    if (session.hoursTarget !== null) {
-      const remain = session.hoursTarget * 3600 - elapsedSec;
-      if (remain <= 0) { endCharge(); }
-    }
+    if (session.amountTarget !== null && rawFee >= session.amountTarget) { endCharge(); }
   }
 
   function formatClock(sec) {
@@ -2859,7 +2878,8 @@
 
     const elapsedSec = Math.floor((Date.now() - session.startTs) / 1000);
     const minutes = Math.max(1, Math.ceil(elapsedSec / 60));
-    const rawFee = session.priceMin * minutes;
+    let rawFee = session.priceMin * minutes;
+    if (session.amountTarget !== null) rawFee = Math.min(rawFee, session.amountTarget);
     const coupon = COUPON_WALLET.find(c => c.id === session.couponId);
     const discount = coupon ? Math.min(rawFee, coupon.amount) : 0;
     const fee = Math.max(0, rawFee - discount);
@@ -2935,9 +2955,8 @@
   }
 
   function modeLabel(mode) {
-    if (mode === 'full') return '充满计费';
-    if (mode === 'more') return customHour + '小时';
-    return mode + '小时';
+    if (mode === 'full') return '充满自停';
+    return mode + '元';
   }
 
   function durationLabel(minutes) {
@@ -2956,7 +2975,7 @@
 
   function chargeSelectionLabel() {
     if (!session) return '—';
-    return session.hoursTarget === null ? '充满计费' : session.hoursTarget.toFixed(2) + '小时';
+    return session.amountTarget === null ? '充满自停' : session.amountTarget + '元';
   }
 
   function refreshBalances() {
